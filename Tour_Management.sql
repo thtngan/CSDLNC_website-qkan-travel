@@ -15,13 +15,13 @@ DROP TABLE ITINERARY
 DROP TABLE FEEDBACK
 DROP TABLE VISA
 DROP TABLE PASSPORT
-DROP TABLE PRICE_RECORD
+DROP TABLE HOTEL_PRICE_RECORD
+DROP TABLE TRANSPORT_PRICE_RECORD
 DROP TABLE SHOPPING_CART
 DROP TABLE HOTEL_BOOKING
 DROP TABLE TRANSPORT_BOOKING
 DROP TABLE HOTEL_SERVICE
 DROP TABLE TRANSPORT_SERVICE
-
 DROP TABLE ROOM_TYPE
 DROP TABLE TICKET_TYPE
 DROP TABLE CONTRACT_RECORD
@@ -35,7 +35,6 @@ DROP TABLE CUSTOMER
 DROP TABLE ACCOUNT
 DROP TABLE CITY
 DROP TABLE COUNTRY
-
 */
 GO
 ---------------------------------------------------
@@ -60,8 +59,9 @@ CREATE TABLE CUSTOMER
 	tele varchar(12),
 	email varchar(50) not null unique,
 	cust_address varchar(100),
-	membership tinyint,
-	id_no char(12)
+	membership varchar(7) DEFAULT 'NONE' not null,
+	id_no char(12),
+	CHECK(membership = 'NONE' OR membership = 'MEMBER' OR membership = 'SILVER' OR membership = 'GOLD' OR membership = 'DIAMOND')
 )
 ---------------------------------------------------
 -- PASSPORT
@@ -82,7 +82,7 @@ CREATE TABLE VISA
 (
 	id char(8) not null primary key,
 	passport_id char(8) not null,
-	issuing_post varchar(50),
+	country_id int,
 	issue_date date not null,
 	expiration_date date not null,
 	type_class varchar(5),
@@ -100,8 +100,9 @@ CREATE TABLE STAFF
 	tele varchar(12),
 	email varchar(50) not null unique,
 	staff_address varchar(100),
-	staff_type_id int,
-	id_no char(12)
+	staff_type_id int NOT NULL,
+	id_no char(12) NOT NULL,
+	manager_id int NOT NULL
 )
 ---------------------------------------------------
 -- STAFF_TYPE
@@ -152,6 +153,7 @@ CREATE TABLE TOUR
 	register_date date,
 	max_quantity int,
 	cur_quantity int not null default 0,
+	img image,
 	descriptions text,
 	note text,
 	check (end_date > depart_date and register_date <= depart_date and cur_quantity <= max_quantity)
@@ -162,7 +164,7 @@ CREATE TABLE TOUR_DETAIL
 (
 	tour_id int not null,
 	cust_id int not null,
-	INVOICE_id int not null,
+	invoice_id int not null,
 	note text,
 	primary key (tour_id, cust_id)
 )
@@ -248,14 +250,22 @@ CREATE TABLE TRANSPORT_SERVICE
 	active bit not null default 0
 )
 ---------------------------------------------------
--- PRICE_RECORD
-CREATE TABLE PRICE_RECORD
+-- HOTEL_PRICE_RECORD
+CREATE TABLE HOTEL_PRICE_RECORD
 (
 	service_id int not null,
 	active_date datetime,
-	partner_type_id int not null,
 	service_price decimal(10,2),
-	primary key (service_id, active_date, partner_type_id)
+	primary key (service_id, active_date)
+)
+---------------------------------------------------
+-- TRANSPORT_PRICE_RECORD
+CREATE TABLE TRANSPORT_PRICE_RECORD
+(
+	service_id int not null,
+	active_date datetime,
+	service_price decimal(10,2),
+	primary key (service_id, active_date)
 )
 ---------------------------------------------------
 -- CONTRACTS
@@ -273,13 +283,13 @@ CREATE TABLE CONTRACTS
 -- CONTRACT_RECORD
 CREATE TABLE CONTRACT_RECORD
 (
-	id int identity(1,1) not null primary key,
 	contract_id int not null,
 	active_date date not null,
 	end_date date not null,
 	commission float not null,
 	rec_timestamp datetime not null,
-	operation char(3) not null
+	operation char(3) not null,
+	PRIMARY KEY (contract_id, rec_timestamp),
 	CHECK (operation = 'INS' or operation = 'UPD' or operation = 'DEL')
 )
 ---------------------------------------------------
@@ -332,11 +342,12 @@ CREATE TABLE INVOICE_LINE
 -- INVOICE_RECORD
 CREATE TABLE INVOICE_RECORD
 (
-	id int identity(1,1) not null primary key,
 	invoice_id int not null,
 	rec_timestamp datetime not null default GETDATE(),
-	operation varchar(6),
-	CHECK (operation = 'CANCEL' or operation = 'PAID' or operation = 'REFUND' or operation = 'CREATE')
+	invoice_status tinyint,
+	operation char(3),
+	primary key (invoice_id, rec_timestamp),
+	CHECK (operation = 'INS' or operation = 'UPD' or operation = 'DEL')
 )
 ---------------------------------------------------
 -- SHOPPING_CART
@@ -353,7 +364,6 @@ CREATE TABLE ROSTER
 (
 	staff_id int not null,
 	tour_id int not null,
-	taskmaster_id int not null,
 	assignment_date date not null,
 	note text,
 	primary key (staff_id, tour_id)
@@ -367,6 +377,7 @@ ALTER TABLE CUSTOMER ADD CONSTRAINT FK02_CUSTOMER FOREIGN KEY(nation_id) REFEREN
 -- Foreign key for table STAFF
 ALTER TABLE STAFF ADD CONSTRAINT FK01_STAFF FOREIGN KEY(email) REFERENCES ACCOUNT(email)
 ALTER TABLE STAFF ADD CONSTRAINT FK02_STAFF FOREIGN KEY(staff_type_id) REFERENCES STAFF_TYPE(id)
+ALTER TABLE STAFF ADD CONSTRAINT FK03_STAFF FOREIGN KEY(manager_id) REFERENCES STAFF(id)
 
 -- Foreign key for table CITY
 ALTER TABLE CITY ADD CONSTRAINT FK01_CITY FOREIGN KEY(country_id) REFERENCES COUNTRY(id)
@@ -406,6 +417,7 @@ ALTER TABLE SHOPPING_CART ADD CONSTRAINT FK02_SHOPPING_CART FOREIGN KEY(tour_id)
 -- Foreign key for table PARTNERS
 ALTER TABLE PARTNERS ADD CONSTRAINT FK01_PARTNERS FOREIGN KEY(city_id) REFERENCES CITY(id)
 ALTER TABLE PARTNERS ADD CONSTRAINT FK02_PARTNERS FOREIGN KEY(partner_type_id) REFERENCES PARTNER_TYPE(id)
+ALTER TABLE PARTNERS ADD CONSTRAINT FK03_PARTNERS FOREIGN KEY(email) REFERENCES ACCOUNT(email)
 
 -- Foreign key for table HOTEL_SERVICE
 ALTER TABLE HOTEL_SERVICE ADD CONSTRAINT FK01_HOTEL_SERVICE FOREIGN KEY(partner_id) REFERENCES PARTNERS(id)
@@ -417,10 +429,12 @@ ALTER TABLE TRANSPORT_SERVICE ADD CONSTRAINT FK02_TRANSPORT_SERVICE FOREIGN KEY(
 ALTER TABLE TRANSPORT_SERVICE ADD CONSTRAINT FK03_TRANSPORT_SERVICE FOREIGN KEY(from_city_id) REFERENCES CITY(id)
 ALTER TABLE TRANSPORT_SERVICE ADD CONSTRAINT FK04_TRANSPORT_SERVICE FOREIGN KEY(to_city_id) REFERENCES CITY(id)
 
--- Foreign key for table PRICE_RECORD
-ALTER TABLE PRICE_RECORD ADD CONSTRAINT FK01_PRICE_RECORD FOREIGN KEY(service_id) REFERENCES TRANSPORT_SERVICE(id)
-ALTER TABLE PRICE_RECORD ADD CONSTRAINT FK02_PRICE_RECORD FOREIGN KEY(service_id) REFERENCES HOTEL_SERVICE(id)
-ALTER TABLE PRICE_RECORD ADD CONSTRAINT FK03_PRICE_RECORD FOREIGN KEY(partner_type_id) REFERENCES PARTNER_TYPE(id)
+-- Foreign key for table HOTEL_PRICE_RECORD
+ALTER TABLE HOTEL_PRICE_RECORD ADD CONSTRAINT FK01_HOTEL_PRICE_RECORD FOREIGN KEY(service_id) REFERENCES HOTEL_SERVICE(id)
+
+-- Foreign key for table TRANSPORT_PRICE_RECORD
+ALTER TABLE TRANSPORT_PRICE_RECORD ADD CONSTRAINT FK01_TRANSPORT_PRICE_RECORD FOREIGN KEY(service_id) REFERENCES TRANSPORT_SERVICE(id)
+
 
 -- Foreign key for table CONTRACTS
 ALTER TABLE CONTRACTS ADD CONSTRAINT FK01_CONTRACTS FOREIGN KEY(partner_id) REFERENCES PARTNERS(id)
@@ -448,6 +462,7 @@ ALTER TABLE PASSPORT ADD CONSTRAINT FK02_PASSPORT FOREIGN KEY(country_id) REFERE
 
 -- Foreign key for table VISA
 ALTER TABLE VISA ADD CONSTRAINT FK01_VISA FOREIGN KEY(passport_id) REFERENCES PASSPORT(id)
+ALTER TABLE VISA ADD CONSTRAINT FK02_VISA FOREIGN KEY(country_id) REFERENCES COUNTRY(id)
 GO
 ---------------------------------------------------
 ---------------------------------------------------
@@ -584,4 +599,87 @@ BEGIN
 	)FROM TOUR JOIN deleted del ON TOUR.id = del.tour_id		
 END
 GO
+---------------------------------------------------
+---------------------------------------------------
+-- CAP NHAT KHACH HANG THAN THIET
+ALTER TABLE INVOICE ADD total decimal(10,2)
+GO
+CREATE TRIGGER tr_menbership
+ON INVOICE
+AFTER INSERT, DELETE
+AS
+DECLARE @cust_id int, @promo decimal(10,2)
+BEGIN
+	SELECT @cust_id = del.cust_id FROM inserted ins join deleted del on ins.id = del.id 
+
+	SELECT @promo = SUM(total) FROM INVOICE WHERE cust_id = @cust_id
+	IF @promo > 100000000
+		UPDATE CUSTOMER SET membership = 'DIAMOND' WHERE id = @cust_id
+	ELSE IF @promo > 50000000
+		UPDATE CUSTOMER SET membership = 'GOLD' WHERE id = @cust_id
+	ELSE IF @promo > 30000000
+		UPDATE CUSTOMER SET membership = 'SILVER' WHERE id = @cust_id
+	ELSE IF @promo > 10000000
+		UPDATE CUSTOMER SET membership = 'MEMBER' WHERE id = @cust_id
+END
+GO
+---------------------------------------------------
+---------------------------------------------------
+-- RANG BUOC TOUR_DETAIL
+/*CREATE TRIGGER tr_tour_detail
+ON TOUR_DETAIL
+AFTER INSERT
+AS
+DECLARE @count int, @max int, @dob date
+BEGIN
+	SELECT @count = COUNT(*) FROM TOUR_DETAIL 
+	SELECT @max = max_quantity FROM TOUR
+	IF @count >= @max
+		BEGIN 
+			RAISERROR ('Out of bound',16,1)
+			ROLLBACK
+			RETURN;
+		END
+	ELSE 
+		SELECT @dob = dob FROM CUSTOMER C JOIN inserted INS ON C.id = INS.cust_id
+		IF D
+END
+GO*/
+
+---------------------------------------------------
+---------------------------------------------------
+-- CAP NHAT THEM COT TONG TIEN
+DECLARE @id int, @total decimal(10,2)
+DECLARE cur_INVOICE CURSOR
+FORWARD_ONLY
+FOR
+	SELECT id FROM INVOICE
+OPEN cur_INVOICE
+FETCH NEXT FROM cur_INVOICE INTO @id
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	SELECT @total = SUM(price*quantity)
+	FROM INVOICE_LINE
+	WHERE invoice_id = @id
+
+	PRINT 'Updating ' + @id
+	UPDATE INVOICE
+	SET total = @total
+	WHERE id = @id 
+
+	FETCH NEXT FROM cur_INVOICE INTO @id
+END
+CLOSE cur_INVOICE
+DEALLOCATE cur_INVOICE
+---------------------------------------------------
+---------------------------------------------------
+-- TINH THU CHI
+/*CREATE VIEW_REVENUE_EXPENDITURE
+AS
+SELECT id, tour_name, price*cur_quantity as total, (select fee_per_person from ITINERARY where tour_id = TOUR.id)*cur_quantity + 
+FROM TOUR 
+WHERE end_date <= GETDATE()*/
+
+---------------------------------------------------
+---------------------------------------------------
 set dateformat dmy
