@@ -2,12 +2,10 @@
 ( NAME = qltour_data, FILENAME = 'C:\CSDL\qltour_data.mdf', SIZE = 10, MAXSIZE = 1000, FILEGROWTH = 10)
 LOG ON
 ( NAME = qltour_log, FILENAME = 'C:\CSDL\qltour_log.ldf', SIZE = 10, FILEGROWTH = 5)*/
-
 USE qltour
 GO
 /*DROP TABLE ROSTER
 DROP TABLE INVOICE_RECORD
-DROP TABLE INVOICE_LINE
 DROP TABLE TOUR_DETAIL
 DROP TABLE INVOICE
 DROP TABLE TIMESHEETS
@@ -53,15 +51,16 @@ CREATE TABLE CUSTOMER
 (
 	id int identity(1,1) not null primary key,
 	cust_name varchar(50) not null,
-	gender bit,
-	dob date,
+	gender BIT NOT NULL,
+	dob DATE NOT null,
 	nation_id int NOT NULL,
 	tele varchar(12),
-	email varchar(50) not null unique,
-	cust_address varchar(100),
+	email varchar(50) unique,
+	cust_address varchar(100) NOT NULL,
 	membership varchar(7) DEFAULT 'NONE' not null,
 	id_no char(12),
-	CHECK(membership = 'NONE' OR membership = 'MEMBER' OR membership = 'SILVER' OR membership = 'GOLD' OR membership = 'DIAMOND')
+	CHECK(membership = 'NONE' OR membership = 'MEMBER' OR membership = 'SILVER' OR membership = 'GOLD' OR membership = 'DIAMOND'),
+	CHECK(DATEDIFF(YEAR,dob,GETDATE()) > 2)
 )
 ---------------------------------------------------
 -- PASSPORT
@@ -82,7 +81,7 @@ CREATE TABLE VISA
 (
 	id char(8) not null primary key,
 	passport_id char(8) not null,
-	country_id int,
+	country_id INT NOT NULL,
 	issue_date date not null,
 	expiration_date date not null,
 	type_class varchar(5),
@@ -95,11 +94,11 @@ CREATE TABLE STAFF
 (
 	id int identity(1,1) not null primary key,
 	staff_name varchar(50) not null,
-	gender bit,
-	dob date,
-	tele varchar(12),
+	gender BIT NOT NULL,
+	dob DATE NOT NULL,
+	tele varchar(12) NOT null,
 	email varchar(50) not null unique,
-	staff_address varchar(100),
+	staff_address varchar(100) NOT null,
 	staff_type_id int NOT NULL,
 	id_no char(12) NOT NULL,
 	manager_id int NOT NULL
@@ -151,12 +150,11 @@ CREATE TABLE TOUR
 	end_date date not null,
 	price decimal(10,2),
 	register_date date,
-	max_quantity int,
-	cur_quantity int not null default 0,
+	max_quantity int not null check(max_quantity > 0),
+	cur_quantity int not null default 0 check(cur_quantity >= 0),
 	img image,
 	descriptions text,
 	note text,
-	check (end_date > depart_date and register_date <= depart_date and cur_quantity <= max_quantity)
 )
 ---------------------------------------------------
 -- TOUR_DETAIL
@@ -254,7 +252,7 @@ CREATE TABLE TRANSPORT_SERVICE
 CREATE TABLE HOTEL_PRICE_RECORD
 (
 	service_id int not null,
-	active_date datetime,
+	active_date DATETIME NOT NULL,
 	service_price decimal(10,2),
 	primary key (service_id, active_date)
 )
@@ -263,7 +261,7 @@ CREATE TABLE HOTEL_PRICE_RECORD
 CREATE TABLE TRANSPORT_PRICE_RECORD
 (
 	service_id int not null,
-	active_date datetime,
+	active_date DATETIME NOT NULL,
 	service_price decimal(10,2),
 	primary key (service_id, active_date)
 )
@@ -276,8 +274,9 @@ CREATE TABLE CONTRACTS
 	staff_id int not null,
 	active_date date not null,
 	end_date date not null,
-	contract_status tinyint not null default 0,
-	commission float
+	contract_status varchar(8) not null default 'PENDING',
+	commission float NOT NULL,
+	CHECK (contract_status IN ('PENDING', 'APPROVED', 'RUNNING', 'EXPIRED', 'CANCELED'))
 )
 ---------------------------------------------------
 -- CONTRACT_RECORD
@@ -320,23 +319,16 @@ CREATE TABLE INVOICE
 (
 	id int identity(1,1) not null primary key,
 	cust_id int not null,
+	tour_id int not null,
 	order_date datetime not null default GETDATE(),
 	note text,
-	invoice_status tinyint not null default 0,
+	invoice_status varchar(10) default 'PENDING',
 	refunded_amount decimal(10,2),
 	payment_method char(4) not null default 'CASH',
-	check(payment_method = 'CASH' or payment_method = 'CARD')
-)
----------------------------------------------------
--- INVOICE_LINE
-CREATE TABLE INVOICE_LINE
-(
-	tour_id int not null,
-	invoice_id int not null,
-	quantity int not null,
 	price decimal(10,2),
-	primary key (tour_id, invoice_id),
-	check (quantity > 0)
+	quantity int not null check(quantity > 0),
+	CHECK(payment_method = 'CASH' or payment_method = 'CARD'),
+	CHECK (invoice_status IN ('PENDING', 'APPROVED', 'PAID', 'CANCELLING', 'CANCELED'))
 )
 ---------------------------------------------------
 -- INVOICE_RECORD
@@ -344,10 +336,11 @@ CREATE TABLE INVOICE_RECORD
 (
 	invoice_id int not null,
 	rec_timestamp datetime not null default GETDATE(),
-	invoice_status tinyint,
+	invoice_status varchar(10),
 	operation char(3),
 	primary key (invoice_id, rec_timestamp),
-	CHECK (operation = 'INS' or operation = 'UPD' or operation = 'DEL')
+	CHECK (operation = 'INS' or operation = 'UPD' or operation = 'DEL'),
+	CHECK (invoice_status IN ('PENDING', 'APPROVED', 'PAID', 'CANCELLING', 'CANCELED'))
 )
 ---------------------------------------------------
 -- SHOPPING_CART
@@ -401,11 +394,8 @@ ALTER TABLE ROSTER ADD CONSTRAINT FK01_ROSTER FOREIGN KEY(staff_id) REFERENCES S
 ALTER TABLE ROSTER ADD CONSTRAINT FK02_ROSTER FOREIGN KEY(tour_id) REFERENCES TOUR(id)
 
 -- Foreign key for table INVOICE
-ALTER TABLE INVOICE ADD CONSTRAINT FK01_invoice FOREIGN KEY(cust_id) REFERENCES CUSTOMER(id)
-
--- Foreign key for table INVOICE_LINE
-ALTER TABLE INVOICE_LINE ADD CONSTRAINT FK01_INVOICE_LINE FOREIGN KEY(tour_id) REFERENCES TOUR(id)
-ALTER TABLE INVOICE_LINE ADD CONSTRAINT FK02_INVOICE_LINE FOREIGN KEY(invoice_id) REFERENCES INVOICE(id)
+ALTER TABLE INVOICE ADD CONSTRAINT FK01_INVOICE FOREIGN KEY(cust_id) REFERENCES CUSTOMER(id)
+ALTER TABLE INVOICE ADD CONSTRAINT FK02_INVOICE FOREIGN KEY (tour_id) REFERENCES TOUR(id)
 
 -- Foreign key for table INVOICE_RECORD
 ALTER TABLE INVOICE_RECORD ADD CONSTRAINT FK01_INVOICE_RECORD FOREIGN KEY(invoice_id) REFERENCES INVOICE(id)
@@ -434,7 +424,6 @@ ALTER TABLE HOTEL_PRICE_RECORD ADD CONSTRAINT FK01_HOTEL_PRICE_RECORD FOREIGN KE
 
 -- Foreign key for table TRANSPORT_PRICE_RECORD
 ALTER TABLE TRANSPORT_PRICE_RECORD ADD CONSTRAINT FK01_TRANSPORT_PRICE_RECORD FOREIGN KEY(service_id) REFERENCES TRANSPORT_SERVICE(id)
-
 
 -- Foreign key for table CONTRACTS
 ALTER TABLE CONTRACTS ADD CONSTRAINT FK01_CONTRACTS FOREIGN KEY(partner_id) REFERENCES PARTNERS(id)
@@ -511,35 +500,33 @@ GO
 ---------------------------------------------------
 -- LICH SU CAP NHAT GIA DICH VU
 CREATE TRIGGER tr_hotel_price_record
-ON TRANSPORT_SERVICE 
+ON HOTEL_SERVICE
 AFTER INSERT, UPDATE
 AS
 BEGIN
 	SET NOCOUNT ON;
-	INSERT INTO PRICE_RECORD(
+	INSERT INTO HOTEL_PRICE_RECORD(
 		service_id,
-		partner_type_id,
 		active_date,
 		service_price
 	)
-	SELECT ins.id, (SELECT P.partner_type_id FROM TRANSPORT_SERVICE TS JOIN PARTNERS P ON TS.partner_id = P.id WHERE TS.id = ins.id), GETDATE(), ins.service_price
+	SELECT ins.id, GETDATE(), ins.service_price
 	FROM inserted ins
 END
 GO
 ---------------------------------------------------
 CREATE TRIGGER tr_transport_price_record
-ON HOTEL_SERVICE 
+ON TRANSPORT_SERVICE
 AFTER INSERT, UPDATE
 AS
 BEGIN
 	SET NOCOUNT ON;
-	INSERT INTO PRICE_RECORD(
+	INSERT INTO TRANSPORT_PRICE_RECORD(
 		service_id,
-		partner_type_id,
 		active_date,
 		service_price
 	)
-	SELECT ins.id, (SELECT P.partner_type_id FROM TRANSPORT_SERVICE TS JOIN PARTNERS P ON TS.partner_id = P.id WHERE TS.id = ins.id), GETDATE(), ins.service_price
+	SELECT ins.id, GETDATE(), ins.service_price
 	FROM inserted ins
 END
 GO
@@ -548,63 +535,74 @@ GO
 -- LICH SU TRUY VET HOA DON
 CREATE TRIGGER tr_invoice_record
 ON INVOICE 
-AFTER INSERT
+AFTER INSERT, UPDATE
 AS
-	DECLARE @operation varchar(6), @new_status tinyint, @old_status tinyint
+	DECLARE @reg date, @id int, @tour decimal(10,2)
 	IF NOT EXISTS (SELECT * FROM deleted)
 	BEGIN
+		SELECT @id = inserted.id ,@reg =  TOUR.register_date, @tour = TOUR.price FROM TOUR JOIN inserted ON TOUR.id = inserted.tour_id
+		IF DATEDIFF(DD, GETDATE(), @reg) < 0
+		BEGIN
+			UPDATE INVOICE SET price = CAST(@tour*1.05 AS decimal(10,2)) WHERE id = @id
+		END
+		UPDATE INVOICE SET price = @tour WHERE id = @id
 		SET NOCOUNT ON;
 		INSERT INTO INVOICE_RECORD(
 			invoice_id,
 			rec_timestamp,
 			operation
 		)
-		SELECT ins.id, GETDATE(), 'CREATE'
+		SELECT ins.id, GETDATE(), 'INS'
 		FROM inserted ins
 	END
 	ELSE
 	BEGIN
-		SELECT @new_status = invoice_status FROM inserted
-		SELECT @old_status = invoice_status FROM deleted
-		IF @new_status <> @old_status
-		BEGIN
-			IF @new_status = 1
-				SET @operation = 'PAID'
-			IF @new_status = 2
-				SET @operation = 'CANCEL'
-			IF @new_status = 3
-				SET @operation = 'REFUND'
-			SET NOCOUNT ON;
-			INSERT INTO INVOICE_RECORD(
-				invoice_id,
-				rec_timestamp,
-				operation
-			)
-			SELECT ins.id, GETDATE(), @operation
-			FROM inserted ins
-		END
+		SET NOCOUNT ON;
+		INSERT INTO INVOICE_RECORD(
+			invoice_id,
+			rec_timestamp,
+			invoice_status,
+			operation
+		)
+		SELECT ins.id, GETDATE(), ins.invoice_status,'UPD'
+		FROM inserted ins
 	END
+GO
+CREATE TRIGGER tr_invoice_record_del
+ON INVOICE 
+INSTEAD OF DELETE
+AS
+BEGIN
+	UPDATE INVOICE SET invoice_status = 'CANCELLING' FROM INVOICE JOIN deleted ON INVOICE.id = deleted.id
+	SET NOCOUNT ON;
+	INSERT INTO INVOICE_RECORD(
+		invoice_id,
+		rec_timestamp,
+		invoice_status,
+		operation
+	)
+	SELECT del.id, GETDATE(), 4,'DEL'
+	FROM deleted del
+END
 GO
 ---------------------------------------------------
 ---------------------------------------------------
 -- CAP NHAT SO LUONG SLOT CUA TOUR
-CREATE TRIGGER tr_invoice_detail_ins
-ON INVOICE_LINE
+CREATE TRIGGER tr_invoice_ins
+ON INVOICE
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN
-	UPDATE TOUR SET cur_quantity = cur_quantity  - (
-		SELECT quantity FROM inserted WHERE tour_id = TOUR.id) +
-		(SELECT quantity FROM deleted WHERE tour_id = TOUR.id
-	)FROM TOUR JOIN deleted del ON TOUR.id = del.tour_id		
+	UPDATE TOUR SET cur_quantity = cur_quantity  - 
+		(SELECT quantity FROM inserted WHERE tour_id = TOUR.id) +
+		(SELECT quantity FROM deleted WHERE tour_id = TOUR.id)
+		FROM TOUR JOIN deleted del ON TOUR.id = del.tour_id		
 END
 GO
 ---------------------------------------------------
 ---------------------------------------------------
 -- CAP NHAT KHACH HANG THAN THIET
-ALTER TABLE INVOICE ADD total decimal(10,2)
-GO
-CREATE TRIGGER tr_menbership
+CREATE TRIGGER tr_membership
 ON INVOICE
 AFTER INSERT, DELETE
 AS
@@ -612,7 +610,7 @@ DECLARE @cust_id int, @promo decimal(10,2)
 BEGIN
 	SELECT @cust_id = del.cust_id FROM inserted ins join deleted del on ins.id = del.id 
 
-	SELECT @promo = SUM(total) FROM INVOICE WHERE cust_id = @cust_id
+	SELECT @promo = SUM(price*quantity) FROM INVOICE WHERE cust_id = @cust_id
 	IF @promo > 100000000
 		UPDATE CUSTOMER SET membership = 'DIAMOND' WHERE id = @cust_id
 	ELSE IF @promo > 50000000
@@ -625,61 +623,68 @@ END
 GO
 ---------------------------------------------------
 ---------------------------------------------------
+-- RANG BUOC TOUR
+-- drop trigger tr_tour
+CREATE TRIGGER tr_tour
+ON TOUR
+AFTER INSERT, UPDATE
+AS
+DECLARE @register_date date, @end_date date, @start_date date, @cur int, @max int
+BEGIN
+	SELECT @register_date = register_date, @end_date = end_date, @start_date = depart_date, @cur = cur_quantity, @max = max_quantity
+	FROM inserted
+	IF @register_date > @start_date
+	BEGIN 
+		RAISERROR ('reg',16,1)
+		ROLLBACK
+		RETURN;
+	END
+	IF @start_date >= @end_date
+	BEGIN 
+		RAISERROR ('beg',16,1)
+		ROLLBACK
+		RETURN;
+	END
+	IF @cur > @max
+	BEGIN 
+		RAISERROR ('Out of bound',16,1)
+		ROLLBACK
+		RETURN;
+	END
+END
+GO
+---------------------------------------------------
+---------------------------------------------------
 -- RANG BUOC TOUR_DETAIL
-/*CREATE TRIGGER tr_tour_detail
+CREATE TRIGGER tr_tour_detail
 ON TOUR_DETAIL
 AFTER INSERT
 AS
 DECLARE @count int, @max int, @dob date
 BEGIN
-	SELECT @count = COUNT(*) FROM TOUR_DETAIL 
-	SELECT @max = max_quantity FROM TOUR
+	SELECT @count = COUNT(*) FROM TOUR_DETAIL TD JOIN inserted INS ON TD.tour_id = INS.tour_id
+	SELECT @max = max_quantity FROM TOUR T JOIN inserted INS ON T.id = INS.tour_id
 	IF @count >= @max
-		BEGIN 
-			RAISERROR ('Out of bound',16,1)
-			ROLLBACK
-			RETURN;
-		END
-	ELSE 
-		SELECT @dob = dob FROM CUSTOMER C JOIN inserted INS ON C.id = INS.cust_id
-		IF D
+	BEGIN 
+		RAISERROR ('Out of bound',16,1)
+		ROLLBACK
+		RETURN;
+	END
 END
-GO*/
-
+GO
 ---------------------------------------------------
 ---------------------------------------------------
--- CAP NHAT THEM COT TONG TIEN
-DECLARE @id int, @total decimal(10,2)
-DECLARE cur_INVOICE CURSOR
-FORWARD_ONLY
-FOR
-	SELECT id FROM INVOICE
-OPEN cur_INVOICE
-FETCH NEXT FROM cur_INVOICE INTO @id
-WHILE @@FETCH_STATUS = 0
-BEGIN
-	SELECT @total = SUM(price*quantity)
-	FROM INVOICE_LINE
-	WHERE invoice_id = @id
+-- RANG BUOC INVOICE
 
-	PRINT 'Updating ' + @id
-	UPDATE INVOICE
-	SET total = @total
-	WHERE id = @id 
-
-	FETCH NEXT FROM cur_INVOICE INTO @id
-END
-CLOSE cur_INVOICE
-DEALLOCATE cur_INVOICE
 ---------------------------------------------------
 ---------------------------------------------------
 -- TINH THU CHI
 /*CREATE VIEW_REVENUE_EXPENDITURE
 AS
-SELECT id, tour_name, price*cur_quantity as total, (select fee_per_person from ITINERARY where tour_id = TOUR.id)*cur_quantity + 
+SELECT id, tour_name, price*cur_quantity as total, (select fee_per_person from ITINERARY where tour_id = TOUR.id)*cur_quantity + , 
 FROM TOUR 
 WHERE end_date <= GETDATE()*/
-
 ---------------------------------------------------
 ---------------------------------------------------
-set dateformat dmy
+set dateformat DMY
+GO
