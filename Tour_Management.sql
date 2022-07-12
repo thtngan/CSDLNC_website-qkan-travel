@@ -43,7 +43,7 @@ CREATE TABLE ACCOUNT
 	pass varchar(50) NOT NULL,
 	roles tinyint NOT NULL,
 	active bit not null default 1,
-	CHECK(roles = 1 OR roles = 2 OR roles = 3)
+	CHECK(roles = 1 OR roles = 2 OR roles = 3 OR roles = 0)
 )
 ---------------------------------------------------
 -- CUSTOMER
@@ -58,7 +58,7 @@ CREATE TABLE CUSTOMER
 	email varchar(50) unique,
 	cust_address varchar(100) NOT NULL,
 	membership varchar(7) DEFAULT 'NONE' not null,
-	id_no char(12),
+	id_no char(12) UNIQUE,
 	CHECK(membership = 'NONE' OR membership = 'MEMBER' OR membership = 'SILVER' OR membership = 'GOLD' OR membership = 'DIAMOND'),
 	CHECK(DATEDIFF(YEAR,dob,GETDATE()) > 2)
 )
@@ -100,7 +100,7 @@ CREATE TABLE STAFF
 	email varchar(50) not null unique,
 	staff_address varchar(100) NOT null,
 	staff_type_id int NOT NULL,
-	id_no char(12) NOT NULL,
+	id_no char(12) UNIQUE NOT NULL,
 	manager_id int NOT NULL
 )
 ---------------------------------------------------
@@ -328,7 +328,8 @@ CREATE TABLE INVOICE
 	price decimal(10,2),
 	quantity int not null check(quantity > 0),
 	CHECK(payment_method = 'CASH' or payment_method = 'CARD'),
-	CHECK (invoice_status IN ('PENDING', 'APPROVED', 'PAID', 'CANCELLING', 'CANCELED'))
+	CHECK (invoice_status IN ('PENDING', 'APPROVED', 'PAID', 'CANCELLING', 'CANCELED')),
+	UNIQUE (cust_id, tour_id)
 )
 ---------------------------------------------------
 -- INVOICE_RECORD
@@ -656,6 +657,7 @@ GO
 ---------------------------------------------------
 ---------------------------------------------------
 -- RANG BUOC TOUR_DETAIL
+-- DROP TRIGGER tr_tour_detail
 CREATE TRIGGER tr_tour_detail
 ON TOUR_DETAIL
 AFTER INSERT
@@ -674,16 +676,42 @@ END
 GO
 ---------------------------------------------------
 ---------------------------------------------------
--- RANG BUOC INVOICE
-
+-- DROP VIEW v_incoming_spending
+CREATE VIEW v_incoming_spending (
+	tour_id,
+	tour_name,
+	incoming,
+	spending
+) AS
+	SELECT 
+		TOUR.id,
+		TOUR.tour_name,
+		SUM(TOUR.price * TOUR.cur_quantity) incoming,
+		SUM(HOTEL_BOOKING.price*HOTEL_BOOKING.quantity + TRANSPORT_BOOKING.price*TRANSPORT_BOOKING.quantity + TOUR.cur_quantity*ITINERARY.fee_per_person) spending
+	FROM
+		TOUR 
+	JOIN HOTEL_BOOKING
+		ON TOUR.id = HOTEL_BOOKING.tour_id
+	JOIN TRANSPORT_BOOKING
+		ON TOUR.id = TRANSPORT_BOOKING.tour_id
+	JOIN ITINERARY
+		ON TOUR.id = ITINERARY.tour_id
+	GROUP BY TOUR.id, TOUR.tour_name
+GO
 ---------------------------------------------------
 ---------------------------------------------------
--- TINH THU CHI
-/*CREATE VIEW_REVENUE_EXPENDITURE
-AS
-SELECT id, tour_name, price*cur_quantity as total, (select fee_per_person from ITINERARY where tour_id = TOUR.id)*cur_quantity + , 
-FROM TOUR 
-WHERE end_date <= GETDATE()*/
+-- drop view v_revenue_1year
+CREATE VIEW v_revenue_1year (
+	year,
+	incoming,
+	spending,
+	revenue
+) AS
+	SELECT YEAR(TOUR.end_date), SUM(V.incoming), SUM(v.spending), SUM(V.incoming - V.spending)
+	FROM TOUR JOIN v_incoming_spending V ON TOUR.id = V.tour_id
+	WHERE DATEDIFF(DD, end_date, GETDATE()) > 0
+	GROUP BY YEAR(TOUR.end_date)
+GO
 ---------------------------------------------------
 ---------------------------------------------------
 set dateformat DMY
