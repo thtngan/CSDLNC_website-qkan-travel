@@ -17,8 +17,33 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use('/public', express.static('public'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+//connect nodejs
+var sql = require("mssql");
+
+var config = {
+  user: 'sa',
+  password: 'sa',
+  server: 'localhost', 
+  database: 'qltour' ,
+  trustServerCertificate: true
+};
+
+sql.connect(config, function (err) {
+  if (err) console.log(err) 
+  else console.log('Connect to database successfully');
+  // var request = new sql.Request();
+  // // query to the database and get the records
+  // request.query('select * from tour', function (err, recordset) {
+  //     if (err) console.log(err)
+  //     // send records as a response
+  //     console.log(recordset);
+  // });
+});
+
+//api
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
