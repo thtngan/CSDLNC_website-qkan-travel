@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const sequelize = require('sequelize');
-const db = require('../_helper/db');
+const db = require('../../_helper/db');
 const Staff = db.Staff;
 
 module.exports = {
@@ -12,15 +12,15 @@ module.exports = {
 };
 
 async function getAllStaffs() {
-  const tours = await db.sequelize.query(
-      "SELECT * FROM STAFF",
+  const staffs = await db.sequelize.query(
+      "SELECT s.*, t.staff_type_name FROM STAFF s FULL OUTER JOIN STAFF_TYPE t ON s.staff_type_id = t.id",
       {
           type: sequelize.QueryTypes.SELECT
       }
   )
       .catch((error) => console.error(error));
 
-  console.log(JSON.stringify(tours));
+  // console.log(JSON.stringify(tours));
 
-  return tours;
+  return staffs;
 }
