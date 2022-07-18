@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
+    <title>HELLO</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <% tourList.forEach(function(item){ %>
+    <h1><%= item.tour_name %></h1>
+    <% }) %>
+
   </body>
 </html>

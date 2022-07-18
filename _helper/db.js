@@ -1,11 +1,16 @@
 const tedious = require('tedious');
 const { Sequelize } = require('sequelize');
-
 const { dbName, dbConfig } = require('./config.json');
-
-module.exports = db = {};
+var sequelize;
+var db = {};
 
 initialize();
+
+
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+module.exports = db;
+
 
 async function initialize() {
     const dialect = 'mssql';
@@ -13,11 +18,16 @@ async function initialize() {
     const { userName, password } = dbConfig.authentication.options;
 
     // connect to db
-    const sequelize = new Sequelize(dbName, userName, password, { host, dialect });
+    sequelize = new Sequelize(dbName, userName, password, { host, dialect });
 
     // init models and add them to the exported db object
     db.Tour = require('../src/models/tourModel')(sequelize);
+    db.City = require('../src/models/cityModel')(sequelize);
+    db.Country = require('../src/models/countryModel')(sequelize);
 
-    // sync all models with database
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ force: false})
+    .then(() => {
+        console.log('Table created!')
+    });
 }
+
