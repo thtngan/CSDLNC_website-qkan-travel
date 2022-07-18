@@ -24,7 +24,7 @@ async function initialize() {
     db.Tour = require('../src/models/tourModel')(sequelize);
     db.City = require('../src/models/cityModel')(sequelize);
     db.Country = require('../src/models/countryModel')(sequelize);
-    db.Staff = require('../admin_src/models/')(sequelize);
+    db.Staff = require('../src/models/staffModel')(sequelize);
 
     await sequelize.sync({ force: false})
     .then(() => {
