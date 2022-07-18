@@ -24,4 +24,17 @@ router.get('/', async (req, res, next)=>{
   }
 });
 
+router.get('/all-staff', async (req, res, next)=>{
+  try {
+      const staffs = await getAllStaffs();
+      // res.status(200).json({tour: tour});
+      console.log(staffs[0])
+      res.render('./Admin/staff', { staffList: staffs});
+
+  } catch(e) {
+      console.log(e);
+      res.sendStatus(500);
+  }
+});
+
 module.exports = router;

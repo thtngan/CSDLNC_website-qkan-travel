@@ -174,27 +174,29 @@
                                     </tr>
                                  </thead>
                                  <tbody>
-                                    <tr>
-                                       <td>PRE2209</td>
-                                       <td>
-                                          <h2 class="table-avatar">
-                                             <a href="staff-details.html">Aaliyah</a>
-                                          </h2>
-                                       </td>
-                                       <td>10 A</td>
-                                       <td>2 Feb 2002</td>
-                                       <td>097 3584 5870</td>
-                                       <td class="text-right">
-                                          <div class="actions">
-                                             <a href="edit-staff.html" class="btn btn-sm bg-success-light mr-2">
-                                             <i class="fas fa-pen"></i>
-                                             </a>
-                                             <a href="#" class="btn btn-sm bg-danger-light">
-                                             <i class="fas fa-trash"></i>
-                                             </a>
-                                          </div>
-                                       </td>
-                                    </tr>
+                                    <% for (var i=0; i< staffList.length; i++) { %>
+                                       <tr>
+                                          <td><%= staffList[i].id %></td>
+                                          <td>
+                                             <h2 class="table-avatar">
+                                                <a href="/staff/<%= staffList[i].id%>"><%= staffList[i].staff_name %></a>
+                                             </h2>
+                                          </td>
+                                          <td><%= staffList[i].staff_type_name %></td>
+                                          <td><%= staffList[i].dob %></td>
+                                          <td><%= staffList[i].tele %></td>
+                                          <td class="text-right">
+                                             <div class="actions">
+                                                <a href="edit-staff.html" class="btn btn-sm bg-success-light mr-2">
+                                                <i class="fas fa-pen"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-sm bg-danger-light">
+                                                <i class="fas fa-trash"></i>
+                                                </a>
+                                             </div>
+                                          </td>
+                                       </tr>
+                                    <% } %>
                                     <tr>
                                        <td>PRE2213</td>
                                        <td>
