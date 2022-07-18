@@ -21,7 +21,7 @@ async function getAllTours() {
         }
     )
         .catch((error) => console.error(error));
-        
+
     // console.log(JSON.stringify(tours));
 
     return tours;

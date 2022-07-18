@@ -6,7 +6,7 @@ const {getAllTours} = require('../controllers/tourController');
 
 /*---- Routes ----*/
 router.get('/', function(req, res, next) {
-  res.render('./Client/index', { title: 'Express' });
+  res.render('./Client/tourbookingdetail', { title: 'Express' });
 });
 
 // router.get('/:id', getById);
