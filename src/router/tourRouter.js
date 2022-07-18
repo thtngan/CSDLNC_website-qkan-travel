@@ -5,19 +5,9 @@ const {getAllTours} = require('../controllers/tourController');
 
 
 /*---- Routes ----*/
-router.get('/', async (req, res, next)=>{
-  try {
-      const tour = await getAllTours();
-      // res.status(200).json({tour: tour});
-      console.log(tour[0])
-      res.render('./Client/tourbookingdetail', { tourList: tour});
-
-  } catch(e) {
-      console.log(e);
-      res.sendStatus(500);
-  }
+router.get('/', function(req, res, next) {
+  res.render('./Client/index', { tourList: tour});
 });
-
 
 // router.get('/:id', getById);
 // router.post('/', createSchema, create);

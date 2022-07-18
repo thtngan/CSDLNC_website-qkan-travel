@@ -343,15 +343,15 @@
 						<div id="tg-content" class="tg-content">
 							<div class="tg-tourbookingdetail">
 								<div class="tg-bookinginfo">
-									<h2>Switzerland – 5 Days Mountain Hiking Tour</h2>
+									<h2>tourList[0].tour_name</h2>
 									<div class="tg-durationrating">
 										<span class="tg-stars"><span></span></span>
 										<em>(3 Review)</em>
 									</div>
 									<div class="tg-pricearea">
 										<span>From</span>
-										<del>$2,800</del>
-										<h4>$2,500<sub>/ per person</sub></h4>
+										<del>$ <%= tourList[0].price - 600 %></del>
+										<h4>$ <%=  tourList[0].price %><sub>/ per person</sub></h4>
 									</div>
 									<div class="tg-description">
 										<p>There’s only 5 spot left. Join 19 others at Travelu’s experience this Saturday.</p>
@@ -363,11 +363,11 @@
 												<span class="tg-select">
 													<select class="selectpicker" data-live-search="true" data-width="100%">
 														<option data-tokens="Number of Rooms">Number of Persons</option>
+														<option data-tokens="1">1</option>
 														<option data-tokens="2">2</option>
 														<option data-tokens="4">4</option>
-														<option data-tokens="5">5</option>
 														<option data-tokens="6">6</option>
-														<option data-tokens="10">10</option>
+														<option data-tokens="8">8</option>
 													</select>
 												</span>
 											</div>
@@ -376,11 +376,11 @@
 												<span class="tg-select">
 													<select class="selectpicker" data-live-search="true" data-width="100%">
 														<option data-tokens="Persons">Number of Rooms</option>
+														<option data-tokens="1">1</option>
 														<option data-tokens="2">2</option>
 														<option data-tokens="4">4</option>
-														<option data-tokens="5">5</option>
 														<option data-tokens="6">6</option>
-														<option data-tokens="10">10</option>
+														<option data-tokens="8">8</option>
 													</select>
 												</span>
 											</div>
@@ -390,11 +390,11 @@
 										</fieldset>
 									</form>
 									<ul class="tg-tripinfo">
-										<li><span class="tg-tourduration">12 Days 11 Nights</span></li>
+										<li><span class="tg-tourduration tg-availabilty"><%= "Depart date: " + tourList[0].depart_date %></span></li>
 										<!-- <input type="date"> -->
-										<li><span class="tg-tourduration tg-availabilty">12/08/2022</span></li>
-										<li><span class="tg-tourduration tg-location">San Francisco</span></li>
-										<li><span class="tg-tourduration tg-peoples">24 People in Group</span></li>
+										<li><span class="tg-tourduration tg-availabilty"><%= "End date: " + tourList[0].end_date %></span></li>
+										<li><span class="tg-tourduration tg-location"><%= "Depart city: " + tourList[0].departure_city %></span></li>
+										<li><span class="tg-tourduration tg-location"><%= "Destination city: " + tourList[0].destination_city %></span></li>
 									</ul>
 									<div class="tg-refundshare">
 										<div class="tg-refund">
@@ -455,17 +455,19 @@
 													<div class="tg-box">
 														<h2>About this listing</h2>
 														<div class="tg-description">
-															<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy Etiam porta sem malesuada magna mollis euismod.</p>
+															<p><%= tourList[0].descriptions%></p>
+															<!-- <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy Etiam porta sem malesuada magna mollis euismod.</p>
 															<p>Maecenas sed diam eget risus varius blandit sit amet non magna. Vivamus sagittis lacus vel augue Sed non mauris vitae;erat consequat auctor eu in elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Mauris in erat justo.</p>
 															<p>Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit. Sed ut imperdiet nisi.</p>
-															<p>Proin condimentum fermentum nunc. Etiam pharetra, erat sed fermentum feugiat, velit mauris egestas quam.</p>
+															<p>Proin condimentum fermentum nunc. Etiam pharetra, erat sed fermentum feugiat, velit mauris egestas quam.</p> -->
 														</div>
 													</div>
 													<div class="tg-box">
 														<h2>Guest access</h2>
 														<div class="tg-description">
+															<p><%= tourList[0].note%></p>
 															<p>Proin condimentum fermentum nunc. Etiam pharetra, erat sed fermentum feugiat, velit mauris egestas quam.</p>
-															<p>Maecenas sed diam eget risus varius blandit sit amet non magna. Vivamus sagittis lacus vel augue Sed non mauris vitae;erat consequat auctor eu in elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra.</p>
+															<p>Maecenas sed diam eget risus varius blandit sit amet non magna. Vivamus sagittis lacus vel augue Sed non mauris vitae;erat consequat auctor eu in elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra.</p> -->
 															<ul class="tg-liststyle">
 																<li><span>Ipsum Amet Mattis Pellentesque</span></li>
 																<li><span>Ultricies Vehicula Mollis Vestibulum Fringilla</span></li>

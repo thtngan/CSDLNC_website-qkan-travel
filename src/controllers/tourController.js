@@ -15,7 +15,7 @@ module.exports = {
 
 async function getAllTours() {
     const tours = await db.sequelize.query(
-        "SELECT * FROM TOUR t FULL OUTER JOIN CITY c1 ON c1.id = t.destination_id FULL OUTER JOIN ITINERARY i ON i.tour_id = t.id",
+        "SELECT t.*, c1.city_name as destination_city, c2.city_name as departure_city FROM TOUR t FULL OUTER JOIN CITY c1 ON c1.id = t.destination_id FULL OUTER JOIN CITY c2 ON c2.id = t.departure_id",
         {
             type: sequelize.QueryTypes.SELECT
         }
