@@ -33,6 +33,8 @@ DROP TABLE CUSTOMER
 DROP TABLE ACCOUNT
 DROP TABLE CITY
 DROP TABLE COUNTRY
+DROP VIEW v_incoming_spending
+DROP VIEW v_revenue_1year
 */
 GO
 ---------------------------------------------------
