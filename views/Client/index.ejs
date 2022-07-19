@@ -515,15 +515,15 @@
 								<div id="tg-populartoursslider" class="tg-populartoursslider tg-populartours owl-carousel">
 									<div class="item tg-populartour">
 										<figure>
-											<a href="tourbookingdetail.html"><img src="images/tours/img-01.jpg" alt="image destinations"></a>
+											<a href="/tourbookingdetail/<%= tourList[0].id %>"><img src="images/tours/img-01.jpg" alt="image destinations"></a>
 											<span class="tg-descount">25% Off</span>
 										</figure>
 										<div class="tg-populartourcontent">
 											<div class="tg-populartourtitle">
-												<h3><a href="tourbookingdetail.html">City Tours in Europe, Paris</a></h3>
+												<h3><a href="/tourbookingdetail/<%= tourList[0].id %>"><%= tourList[0].tour_name %></a></h3>
 											</div>
 											<div class="tg-description">
-												<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh...</p>
+												<p><%= tourList[0].descriptions %></p>
 											</div>
 											<div class="tg-populartourfoot">
 												<div class="tg-durationrating">
@@ -532,20 +532,20 @@
 													<em>(3 Review)</em>
 												</div>
 												<div class="tg-pricearea">
-													<del>$2,800</del>
-													<h4>$2,500</h4>
+													<del><%= '$' +  tourList[0].price %></del>
+													<h4> <%= '$' + tourList[0].price / 100 * 75 %></h4>
 												</div>
 											</div>
 										</div>
 									</div>
 									<div class="item tg-populartour">
-										<figure><a href="tourbookingdetail.html"><img src="images/tours/img-02.jpg" alt="image destinations"></a></figure>
+										<figure><a href="/tourbookingdetail/<%= tourList[1].id %>"><img src="images/tours/img-02.jpg" alt="image destinations"></a></figure>
 										<div class="tg-populartourcontent">
 											<div class="tg-populartourtitle">
-												<h3><a href="tourbookingdetail.html">Best of Canada Tours and Travel</a></h3>
+												<h3><a href="/tourbookingdetail/<%= tourList[1].id %>"><%= tourList[1].tour_name %></a></h3>
 											</div>
 											<div class="tg-description">
-												<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh...</p>
+												<p><%= tourList[1].descriptions %></p>
 											</div>
 											<div class="tg-populartourfoot">
 												<div class="tg-durationrating">
@@ -555,19 +555,19 @@
 												</div>
 												<div class="tg-pricearea">
 													<span>from</span>
-													<h4>$600</h4>
+													<h4><%= '$' +  tourList[1].price %></h4>
 												</div>
 											</div>
 										</div>
 									</div>
 									<div class="item tg-populartour">
-										<figure><a href="tourbookingdetail.html"><img src="images/tours/img-03.jpg" alt="image destinations"></a></figure>
+										<figure><a href="/tourbookingdetail/<%= tourList[2].id %>"><img src="images/tours/img-03.jpg" alt="image destinations"></a></figure>
 										<div class="tg-populartourcontent">
 											<div class="tg-populartourtitle">
-												<h3><a href="tourbookingdetail.html">Italy – 3 Days in Rome, Golden Gate</a></h3>
+												<h3><a href="/tourbookingdetail/<%= tourList[2].id %>"><%= tourList[2].tour_name %></a></h3>
 											</div>
 											<div class="tg-description">
-												<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh...</p>
+												<p><%= tourList[2].descriptions %></p>
 											</div>
 											<div class="tg-populartourfoot">
 												<div class="tg-durationrating">
@@ -577,19 +577,19 @@
 												</div>
 												<div class="tg-pricearea">
 													<span>from</span>
-													<h4>$1,430</h4>
+													<h4><%= '$' +  tourList[2].price %></h4>
 												</div>
 											</div>
 										</div>
 									</div>
 									<div class="item tg-populartour">
-										<figure><a href="tourbookingdetail.html"><img src="images/tours/img-04.jpg" alt="image destinations"></a></figure>
+										<figure><a href="/tourbookingdetail/<%= tourList[3].id %>"><img src="images/tours/img-04.jpg" alt="image destinations"></a></figure>
 										<div class="tg-populartourcontent">
 											<div class="tg-populartourtitle">
-												<h3><a href="tourbookingdetail.html">Best of Canada Tours and Travel</a></h3>
+												<h3><a href="/tourbookingdetail/<%= tourList[3].id %>"><%= tourList[3].tour_name %></a></h3>
 											</div>
 											<div class="tg-description">
-												<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh...</p>
+												<p><%= tourList[3].descriptions %></p>
 											</div>
 											<div class="tg-populartourfoot">
 												<div class="tg-durationrating">
@@ -599,7 +599,7 @@
 												</div>
 												<div class="tg-pricearea">
 													<span>from</span>
-													<h4>$600</h4>
+													<h4><%= '$' +  tourList[3].price %></h4>
 												</div>
 											</div>
 										</div>
