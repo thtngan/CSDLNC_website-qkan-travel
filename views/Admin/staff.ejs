@@ -153,7 +153,7 @@
                         </div>
                      </div>
                      <div class="col-auto text-right float-right ml-auto">
-                        <a href="add-staff.html" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+                        <a href="./add-staff" class="btn btn-primary"><i class="fas fa-plus"></i></a>
                      </div>
                   </div>
                </div>
@@ -179,7 +179,7 @@
                                           <td><%= staffList[i].id %></td>
                                           <td>
                                              <h2 class="table-avatar">
-                                                <a href="/staff/<%= staffList[i].id%>"><%= staffList[i].staff_name %></a>
+                                                <a href="./staff/<%= staffList[i].id%>"><%= staffList[i].staff_name %></a>
                                              </h2>
                                           </td>
                                           <td><%= staffList[i].staff_type_name %></td>
@@ -187,7 +187,7 @@
                                           <td><%= staffList[i].tele %></td>
                                           <td class="text-right">
                                              <div class="actions">
-                                                <a href="edit-staff.html" class="btn btn-sm bg-success-light mr-2">
+                                                <a href="./staff-edit/<%= staffList[i].id%>" class="btn btn-sm bg-success-light mr-2">
                                                 <i class="fas fa-pen"></i>
                                                 </a>
                                                 <a href="#" class="btn btn-sm bg-danger-light">
@@ -197,69 +197,6 @@
                                           </td>
                                        </tr>
                                     <% } %>
-                                    <tr>
-                                       <td>PRE2213</td>
-                                       <td>
-                                          <h2 class="table-avatar">
-                                             <a href="staff-details.html">Malynne</a>
-                                          </h2>
-                                       </td>
-                                       <td>8 A</td>
-                                       <td>3 June 2010</td>
-                                       <td>242 362 3100</td>
-                                       <td class="text-right">
-                                          <div class="actions">
-                                             <a href="edit-staff.html" class="btn btn-sm bg-success-light mr-2">
-                                             <i class="fas fa-pen"></i>
-                                             </a>
-                                             <a href="#" class="btn btn-sm bg-danger-light">
-                                             <i class="fas fa-trash"></i>
-                                             </a>
-                                          </div>
-                                       </td>
-                                    </tr>
-                                    <tr>
-                                       <td>PRE2143</td>
-                                       <td>
-                                          <h2 class="table-avatar">
-                                             <a href="staff-details.html">Levell Scott</a>
-                                          </h2>
-                                       </td>
-                                       <td>10 A</td>
-                                       <td>12 Apr 2002</td>
-                                       <td>026 7318 4366</td>
-                                       <td class="text-right">
-                                          <div class="actions">
-                                             <a href="edit-staff.html" class="btn btn-sm bg-success-light mr-2">
-                                             <i class="fas fa-pen"></i>
-                                             </a>
-                                             <a href="#" class="btn btn-sm bg-danger-light">
-                                             <i class="fas fa-trash"></i>
-                                             </a>
-                                          </div>
-                                       </td>
-                                    </tr>
-                                    <tr>
-                                       <td>PRE2431</td>
-                                       <td>
-                                          <h2 class="table-avatar">
-                                             <a href="staff-details.html">Minnie</a>
-                                          </h2>
-                                       </td>
-                                       <td>11 C</td>
-                                       <td>24 Feb 2000</td>
-                                       <td>952 512 4909</td>
-                                       <td class="text-right">
-                                          <div class="actions">
-                                             <a href="edit-staff.html" class="btn btn-sm bg-success-light mr-2">
-                                             <i class="fas fa-pen"></i>
-                                             </a>
-                                             <a href="#" class="btn btn-sm bg-danger-light">
-                                             <i class="fas fa-trash"></i>
-                                             </a>
-                                          </div>
-                                       </td>
-                                    </tr>
                                     <tr>
                                        <td>PRE1534</td>
                                        <td>
@@ -315,7 +252,7 @@
             </footer>
          </div>
       </div>
-      <script src="../../public/js/script_ad.js"></script>
+      <script src=../../public/js/script_ad.js"></script>
    </body>
    <!-- Mirrored from preschool.dreamguystech.com/html-template/students.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 28 Oct 2021 11:11:49 GMT -->
 </html>

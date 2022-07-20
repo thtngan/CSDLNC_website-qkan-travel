@@ -140,7 +140,7 @@
 								<li><a href="javascript:void(0);"><i class="icon-twitter-social-outlined-logo"></i></a></li>
 							</ul> -->
 							<div class="tg-userbox">
-								<a id="tg-btnsignin" class="tg-btn" href="#tg-loginsingup"><span>sign in</span></a>
+								<!-- <a id="tg-btnsignin" class="tg-btn" href="#tg-loginsingup"><span>sign in</span></a> -->
 								<div class="dropdown tg-dropdown">
 									<button class="tg-btndropdown" id="tg-dropdowndashboard" type="button" data-toggle="dropdown">
 										<img src="images/author/img-01.jpg" alt="image description">
@@ -262,9 +262,9 @@
 				</div>
 			</div>
 			<div id="tg-homeslider" class="tg-homeslider owl-carousel tg-haslayout">
-				<figure class="item" data-vide-bg="poster: images/slider/img-01.jpg" data-vide-options="position: 0% 50%"></figure>
-				<figure class="item" data-vide-bg="poster: images/slider/img-02.jpg" data-vide-options="position: 0% 50%"></figure>
-				<figure class="item" data-vide-bg="poster: images/slider/img-03.jpg" data-vide-options="position: 0% 50%"></figure>
+				<figure class="item" data-vide-bg="poster: ../../public/images/tours/Anh_ng.jpg" data-vide-options="position: 0% 50%"></figure>
+				<figure class="item" data-vide-bg="poster: ../../public/images/tours/Argentina_ng.jpg" data-vide-options="position: 0% 50%"></figure>
+				<figure class="item" data-vide-bg="poster: ../../public/images/tours/DanMach_ng.jpg" data-vide-options="position: 0% 50%"></figure>
 			</div>
 		</div>
 		<!--************************************
@@ -285,7 +285,7 @@
 								<div class="tg-tourdestination tg-tourdestinationbigbox">
 									<figure>
 										<a href="javascript:void(0);">
-											<img src="images/destination/img-01.jpg" alt="image destinations">
+											<img src="../../public/images/tours/Ao_vg.jpg" alt="image destinations">
 											<div class="tg-hoverbox">
 												<div class="tg-adventuretitle">
 													<h2>Ice Adventure Vacations</h2>
@@ -300,7 +300,7 @@
 								<div class="tg-tourdestination">
 									<figure>
 										<a href="javascript:void(0);">
-											<img src="images/destination/img-02.jpg" alt="image destinations">
+											<img src="../../public/images/tours/Myanmar_ng.jpg" alt="image destinations">
 											<div class="tg-hoverbox">
 												<div class="tg-adventuretitle">
 													<h2>National Park</h2>
@@ -312,7 +312,7 @@
 								<div class="tg-tourdestination">
 									<figure>
 										<a href="javascript:void(0);">
-											<img src="images/destination/img-03.jpg" alt="image destinations">
+											<img src="../../public/images/tours/Italy_ng.jpg" alt="image destinations">
 											<div class="tg-hoverbox">
 												<div class="tg-adventuretitle">
 													<h2>Adult Vacations</h2>
@@ -388,7 +388,7 @@
 								<div id="tg-populartoursslider" class="tg-populartoursslider tg-populartours owl-carousel">
 									<div class="item tg-populartour">
 										<figure>
-											<a href="/tourbookingdetail/<%= tourList[0].id %>"><img src="images/tours/img-01.jpg" alt="image destinations"></a>
+											<a href="/tourbookingdetail/<%= tourList[0].id %>"><img src="../../public/images/tours/Phap_vg.jpg" alt="image destinations"></a>
 											<span class="tg-descount">25% Off</span>
 										</figure>
 										<div class="tg-populartourcontent">
@@ -412,7 +412,7 @@
 										</div>
 									</div>
 									<div class="item tg-populartour">
-										<figure><a href="/tourbookingdetail/<%= tourList[1].id %>"><img src="images/tours/img-02.jpg" alt="image destinations"></a></figure>
+										<figure><a href="/tourbookingdetail/<%= tourList[1].id %>"><img src="../../public/images/tours/Phap_vg.jpg" alt="image destinations"></a></figure>
 										<div class="tg-populartourcontent">
 											<div class="tg-populartourtitle">
 												<h3><a href="/tourbookingdetail/<%= tourList[1].id %>"><%= tourList[1].tour_name %></a></h3>
@@ -434,7 +434,7 @@
 										</div>
 									</div>
 									<div class="item tg-populartour">
-										<figure><a href="/tourbookingdetail/<%= tourList[2].id %>"><img src="images/tours/img-03.jpg" alt="image destinations"></a></figure>
+										<figure><a href="/tourbookingdetail/<%= tourList[2].id %>"><img src="../../public/images/tours/Phap_vg.jpg" alt="image destinations"></a></figure>
 										<div class="tg-populartourcontent">
 											<div class="tg-populartourtitle">
 												<h3><a href="/tourbookingdetail/<%= tourList[2].id %>"><%= tourList[2].tour_name %></a></h3>
@@ -456,7 +456,7 @@
 										</div>
 									</div>
 									<div class="item tg-populartour">
-										<figure><a href="/tourbookingdetail/<%= tourList[3].id %>"><img src="images/tours/img-04.jpg" alt="image destinations"></a></figure>
+										<figure><a href="/tourbookingdetail/<%= tourList[3].id %>"><img src="../../public/images/tours/Phap_vg.jpg" alt="image destinations"></a></figure>
 										<div class="tg-populartourcontent">
 											<div class="tg-populartourtitle">
 												<h3><a href="/tourbookingdetail/<%= tourList[3].id %>"><%= tourList[3].tour_name %></a></h3>
@@ -497,11 +497,12 @@
 								</div>
 							</div>
 							<div id="tg-guidesslider" class="tg-guidesslider tg-guides owl-carousel">
+								
 								<div class="item tg-guide">
-									<figure><img src="images/Guides/img-01.jpg" alt="image destination"></figure>
+									<figure><img src="../../public/images/avatars/nguoi1.jpg" alt="image destination"></figure>
 									<div class="tg-guidecontent">
 										<div class="tg-guidecontenthead">
-											<h3>Martin Blake</h3>
+											<h3>Linda Stacey</h3>
 											<h4>Adventure Master</h4>
 											<ul class="tg-socialicons tg-socialiconsvtwo">
 												<li><a href="javascript:void(0);"><i class="icon-facebook-logo-outline"></i></a></li>
@@ -515,10 +516,10 @@
 									</div>
 								</div>
 								<div class="item tg-guide">
-									<figure><img src="images/Guides/img-02.jpg" alt="image destination"></figure>
+									<figure><img src="../../public/images/avatars/nguoi2.jpg" alt="image destination"></figure>
 									<div class="tg-guidecontent">
 										<div class="tg-guidecontenthead">
-											<h3>Martin Blake</h3>
+											<h3>Elise Rose</h3>
 											<h4>Adventure Master</h4>
 											<ul class="tg-socialicons tg-socialiconsvtwo">
 												<li><a href="javascript:void(0);"><i class="icon-facebook-logo-outline"></i></a></li>
@@ -532,58 +533,7 @@
 									</div>
 								</div>
 								<div class="item tg-guide">
-									<figure><img src="images/Guides/img-03.jpg" alt="image destination"></figure>
-									<div class="tg-guidecontent">
-										<div class="tg-guidecontenthead">
-											<h3>Martin Blake</h3>
-											<h4>Adventure Master</h4>
-											<ul class="tg-socialicons tg-socialiconsvtwo">
-												<li><a href="javascript:void(0);"><i class="icon-facebook-logo-outline"></i></a></li>
-												<li><a href="javascript:void(0);"><i class="icon-instagram-social-outlined-logo"></i></a></li>
-												<li><a href="javascript:void(0);"><i class="icon-twitter-social-outlined-logo"></i></a></li>
-											</ul>
-										</div>
-										<div class="tg-description">
-											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
-										</div>
-									</div>
-								</div>
-								<div class="item tg-guide">
-									<figure><img src="images/Guides/img-01.jpg" alt="image destination"></figure>
-									<div class="tg-guidecontent">
-										<div class="tg-guidecontenthead">
-											<h3>Martin Blake</h3>
-											<h4>Adventure Master</h4>
-											<ul class="tg-socialicons tg-socialiconsvtwo">
-												<li><a href="javascript:void(0);"><i class="icon-facebook-logo-outline"></i></a></li>
-												<li><a href="javascript:void(0);"><i class="icon-instagram-social-outlined-logo"></i></a></li>
-												<li><a href="javascript:void(0);"><i class="icon-twitter-social-outlined-logo"></i></a></li>
-											</ul>
-										</div>
-										<div class="tg-description">
-											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
-										</div>
-									</div>
-								</div>
-								<div class="item tg-guide">
-									<figure><img src="images/Guides/img-02.jpg" alt="image destination"></figure>
-									<div class="tg-guidecontent">
-										<div class="tg-guidecontenthead">
-											<h3>Martin Blake</h3>
-											<h4>Adventure Master</h4>
-											<ul class="tg-socialicons tg-socialiconsvtwo">
-												<li><a href="javascript:void(0);"><i class="icon-facebook-logo-outline"></i></a></li>
-												<li><a href="javascript:void(0);"><i class="icon-instagram-social-outlined-logo"></i></a></li>
-												<li><a href="javascript:void(0);"><i class="icon-twitter-social-outlined-logo"></i></a></li>
-											</ul>
-										</div>
-										<div class="tg-description">
-											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
-										</div>
-									</div>
-								</div>
-								<div class="item tg-guide">
-									<figure><img src="images/Guides/img-03.jpg" alt="image destination"></figure>
+									<figure><img src="../../public/images/avatars/nguoi3.jpg" alt="image destination"></figure>
 									<div class="tg-guidecontent">
 										<div class="tg-guidecontenthead">
 											<h3>Martin Blake</h3>

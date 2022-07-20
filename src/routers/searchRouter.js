@@ -4,6 +4,7 @@ const {getAllTours} = require('../controllers/tourController');
 
 
 /*---- Routes ----*/
+// to-do
 router.get('/', async (req, res, next)=>{
   try {
       const tour = await getAllTours();
