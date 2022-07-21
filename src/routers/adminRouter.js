@@ -12,11 +12,37 @@ const {getAllStaffs} = require('../controllers/staffController');
 
 
 //Get all staff
-router.get('/', async (req, res, next)=>{
+router.get('/staff/:id', async (req, res, next)=>{
   try {
       const staffs = await getAllStaffs();
       // res.status(200).json({tour: tour});
+      console.log(req.params.id)
       res.render('./Admin/staff-details', { staffList: staffs});
+
+  } catch(e) {
+      console.log(e);
+      res.sendStatus(500);
+  }
+});
+
+router.get('/staff-edit/:id', async (req, res, next)=>{
+  try {
+      const staffs = await getAllStaffs();
+      // res.status(200).json({tour: tour});
+      console.log(req.params.id)
+      res.render('./Admin/edit-staff', { staffList: staffs});
+
+  } catch(e) {
+      console.log(e);
+      res.sendStatus(500);
+  }
+});
+
+router.get('/add-staff', async (req, res, next)=>{
+  try {
+      // res.status(200).json({tour: tour});
+      console.log(req.params.id)
+      res.render('./Admin/add-staff');
 
   } catch(e) {
       console.log(e);

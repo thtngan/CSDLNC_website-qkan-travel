@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 // const tourService = require('../controllers/tourController');
-const {getAllTours} = require('../controllers/tourController');
+const {getAllTours, getTourById} = require('../controllers/tourController');
 
 
 /*---- Routes ----*/
@@ -26,11 +26,15 @@ router.get('/', async (req, res, next)=>{
 
 
 //Get all tour
-router.get('/a', async (req, res, next)=>{
+router.get('/tourbookingdetail/:id', async (req, res, next)=>{
   try {
-      const tour = await getAllTours();
+      // const tour = await getAllTours();
+      id = req.params.id;
+      console.log("id got by param: " + id)
+      const tour = await getTourById(id);
+      console.log(tour)
       // res.status(200).json({tour: tour});
-      res.render('./index', { tourList: tour});
+      res.render('./Client/tourbookingdetail', { tourList: tour});
 
   } catch(e) {
       console.log(e);
