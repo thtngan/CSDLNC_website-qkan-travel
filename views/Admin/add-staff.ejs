@@ -16,7 +16,7 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.min.js" integrity="sha512-cJMgI2OtiquRH4L9u+WQW+mz828vmdp9ljOcm/vKTQ7+ydQUktrPVewlykMgozPP+NUBbHdeifE6iJ6UVjNw5Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-      <script src="../../public/js/submit.js"></script>
+      <script src="../../public/js/submitAddStaff.js"></script>
    </head>
    <body>
       <div class="main-wrapper">
@@ -162,43 +162,35 @@
                   <div class="col-sm-12">
                      <div class="card">
                         <div class="card-body">
-                           <form>
+                           <form id="form">
                               <div class="row">
                                  <div class="col-12">
                                     <h5 class="form-title"><span>Staff Information</span></h5>
                                  </div>
                                  <div class="col-12 col-sm-6">
                                     <div class="form-group">
-                                       <label>First Name</label>
-                                       <input type="text" class="form-control">
-                                    </div>
-                                 </div>
-                                 <div class="col-12 col-sm-6">
-                                    <div class="form-group">
-                                       <label>Last Name</label>
-                                       <input type="text" class="form-control">
+                                       <label>Name</label>
+                                       <input id="name" type="text" class="form-control">
                                     </div>
                                  </div>
                                  <div class="col-12 col-sm-6">
                                     <div class="form-group">
                                        <label>Id Number</label>
-                                       <input type="text" class="form-control">
+                                       <input id="id-number" type="text" class="form-control">
                                     </div>
                                  </div>
                                  <div class="col-12 col-sm-6">
                                     <div class="form-group">
                                        <label>Manager Id</label>
-                                       <input type="text" class="form-control">
+                                       <input id="manager-id" type="text" class="form-control">
                                     </div>
                                  </div>
                                  <div class="col-12 col-sm-6">
                                     <div class="form-group">
                                        <label>Gender</label>
-                                       <select class="form-control">
-                                          <option>Select Gender</option>
-                                          <option>Female</option>
-                                          <option>Male</option>
-                                          <option>Others</option>
+                                       <select id="gender" class="form-control">
+                                          <option value="1">Female</option>
+                                          <option value="0">Male</option>
                                        </select>
                                     </div>
                                  </div>
@@ -206,37 +198,37 @@
                                     <div class="form-group">
                                        <label>Date of Birth</label>
                                        <div>
-                                          <input type="date" class="form-control">
+                                          <input id="dob" type="date" class="form-control">
                                        </div>
                                     </div>
                                  </div>
                                  <div class="col-12 col-sm-6">
                                     <div class="form-group">
                                        <label>Type</label>
-                                       <select class="form-control">
-                                          <option>Select Type</option>
-                                          <option>Driver</option>
-                                          <option>Tour guide</option>
-                                          <option>Sale</option>
+                                       <select id = "type" class="form-control">
+                                          <option selected value="13">Sales</option>
+                                          <option value="53">Marketing</option>
+                                          <option value="6">Accountant</option>
+                                          <option value="1">Service</option>
                                        </select>
                                     </div>
                                  </div>
                                  <div class="col-12 col-sm-6">
                                     <div class="form-group">
                                        <label>Address</label>
-                                       <input type="text" class="form-control">
+                                       <input id="address" type="text" class="form-control">
                                     </div>
                                  </div>
                                  <div class="col-12 col-sm-6">
                                     <div class="form-group">
                                        <label>Mobile Number</label>
-                                       <input type="text" class="form-control">
+                                       <input id="tele" type="text" class="form-control">
                                     </div>
                                  </div>
                                  <div class="col-12 col-sm-6">
                                     <div class="form-group">
                                        <label>Email</label>
-                                       <input type="email" class="form-control">
+                                       <input id="email" type="email" class="form-control">
                                     </div>
                                  </div>
                                  <!-- <div class="col-12">
@@ -303,7 +295,7 @@
                                     </div>
                                  </div> -->
                                  <div class="col-12">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <button id="btnSubmit" class="btn btn-primary">Submit</button>
                                  </div>
                               </div>
                            </form>

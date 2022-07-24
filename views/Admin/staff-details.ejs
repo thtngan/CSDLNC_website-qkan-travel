@@ -54,7 +54,7 @@
                   <div class="dropdown-menu">
                      <div class="user-header">
                         <div class="avatar avatar-sm">
-                           <img src="assets/img/profiles/avatar-01.jpg" alt="User Image" class="avatar-img rounded-circle">
+                           <img src="../../public/images/avatars/nguoi1.jpg" alt="User Image" class="avatar-img rounded-circle">
                         </div>
                         <div class="user-text">
                            <h6>Ryan Taylor</h6>
@@ -163,7 +163,7 @@
                             </ul>
                         </div>
                         <div class="col-sm-2">
-                            <a href="./edit-staff.html" class="btn btn-outline-primary mr-2"><i class="fas fa-pen"></i>&nbsp; Edit</a>
+                            <a href="http://localhost:3000/admin/edit-staff/<%= staffList[0].id%> %>" class="btn btn-outline-primary mr-2"><i class="fas fa-pen"></i>&nbsp; Edit</a>
                         </div>
                     </div>
                 </div>
@@ -174,42 +174,43 @@
                                 <div class="about-info">
                                     <h4>About Me</h4>
                                     <div class="media mt-3">
-                                        <img src="assets/img/user.jpg" class="mr-3" alt="...">
+                                        <img src="../../public/images/avatars/nguoi1.jpg" class="mr-3" alt="...">
                                         <div class="media-body">
                                             <ul>
                                                 <li>
                                                     <span class="title-span">Full Name : </span>
-                                                    <span class="info-span">Daisy Parks</span>
+                                                    <span class="info-span"><%= staffList[0].name %></span>
                                                 </li>
                                                 <li>
-                                                    <span class="title-span">Department : </span>
-                                                    <span class="info-span">Computer Science</span>
+                                                    <span class="title-span">Type : </span>
+                                                    <span class="info-span"><%= staffList[0].staff_type_name %></span>
                                                 </li>
                                                 <li>
                                                     <span class="title-span">Mobile : </span>
-                                                    <span class="info-span">+91 89657 48512</span>
+                                                    <span class="info-span"><%= staffList[0].tele %></span>
                                                 </li>
                                                 <li>
                                                     <span class="title-span">Email : </span>
-                                                    <span class="info-span"><a
-                                                            href="https://preschool.dreamguystech.com/cdn-cgi/l/email-protection"
-                                                            class="__cf_email__"
-                                                            data-cfemail="7216131b010b32151f131b1e5c111d1f">[email&#160;protected]</a></span>
+                                                    <span class="info-span"><%= staffList[0].email %></span>
                                                 </li>
                                                 <li>
                                                     <span class="title-span">Gender : </span>
-                                                    <span class="info-span">Male</span>
+                                                    <% if(staffList[0].gender == true){ %>
+                                                        <span class="info-span"><%= Female %></span>
+                                                    <% } else{ %>  
+                                                        <span class="info-span"><%= Male %></span>
+                                                    <% } %>
                                                 </li>
                                                 <li>
                                                     <span class="title-span">DOB : </span>
-                                                    <span class="info-span">22 Apr 1995</span>
+                                                    <span class="info-span"><%= staffList[0].dob %></span>
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
                                     <div class="row mt-3">
                                         <div class="col-md-12">
-                                            <p>Hello I am Daisy Parks. Lorem Ipsum is simply dummy text of the printing
+                                            <p>Hello I am <%= staffList[0].name %>. Lorem Ipsum is simply dummy text of the printing
                                                 and typesetting industry, simply dummy text of the printing and
                                                 typesetting industry.</p>
                                         </div>
@@ -237,13 +238,13 @@
                                     <div class="row mt-2">
                                         <div class="col-md-12">
                                             <h5>Permanent Address</h5>
-                                            <p>480, Estern Avenue, Courtage area, New York</p>
+                                            <p><%= staffList[0].staff_address %></p>
                                         </div>
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col-md-12">
                                             <h5>Present Address</h5>
-                                            <p>480, Estern Avenue, Courtage area, New York</p>
+                                            <p><%= staffList[0].staff_address %></p>
                                         </div>
                                     </div>
                                 </div>
@@ -253,12 +254,12 @@
                         <div class="row mt-2">
                             <div class="col-12 col-sm-6">
                                 <label>Manager ID:</label>
-                                <input type="text" class="form-control" disabled></input>
+                                <input value="<%= staffList[0].manager_id %>" type="text" class="form-control" disabled>
                             </div>
-                            <div class="col-12 col-sm-6">
+                            <!-- <div class="col-12 col-sm-6">
                                 <label>Manager Name:</label>
                                 <input type="text" class="form-control" disabled></input>
-                            </div>     
+                            </div>      -->
                         </div>
                         <br>
                         <div class="row mt-2">
