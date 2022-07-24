@@ -8,15 +8,31 @@ FROM Sales.SalesOrderDetail sod
 	LEFT JOIN Production.Product p2 ON sod.ProductID = p2.ProductID 
 	JOIN Sales.SalesOrderHeader soh ON soh.SalesOrderID = sod.SalesOrderID 
 WHERE soh.OrderDate  BETWEEN '7/20/2012' AND '7/20/2022'
-drop index index_soh_orderdate on Sales.SalesOrderHeader
-create nonclustered index index_soh_orderdate on Sales.SalesOrderHeader (OrderDate asc) 
-sp_helpindex 'Sales.SalesOrderHeader'
+ 
 --2b. Cho danh sách các saleperson làm việc/bán hàng online trong tháng 7/2011.
+
+CREATE NONCLUSTERED INDEX [_dta_index_SalesOrderHeader_6_1922105888__K3_K1_K12] ON [Sales].[SalesOrderHeader]
+(
+	[OrderDate] ASC,
+	[SalesOrderID] ASC,
+	[SalesPersonID] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+
+
 SELECT e.*
 FROM Sales.SalesPerson sp 
 	RIGHT JOIN Sales.SalesOrderHeader soh ON sp.BusinessEntityID = soh.SalesPersonID 
 	LEFT JOIN HumanResources.Employee e ON e.BusinessEntityID = sp.BusinessEntityID 
-WHERE soh.OrderDate BETWEEN '20110701' AND '20110731'
+WHERE soh.OrderDate BETWEEN '20110701' AND '20110731' AND soh.SalesPersonID IS NOT NULL 
+
+SELECT e.*
+FROM Sales.SalesPerson sp 
+	RIGHT JOIN Sales.SalesOrderHeader soh ON sp.BusinessEntityID = soh.SalesPersonID 
+	LEFT JOIN HumanResources.Employee e ON e.BusinessEntityID = sp.BusinessEntityID 
+WHERE soh.OrderDate BETWEEN '20110701' AND '20110731' AND soh.SalesPersonID IS NOT NULL GROUP BY e.BusinessEntityID, e.NationalIDNumber, e.LoginID, e.OrganizationNode,e.OrganizationLevel, e.JobTitle,e.BirthDate,e.MaritalStatus,e.Gender,e.HireDate,e.SalariedFlag,e.VacationHours,e.SickLeaveHours,e.CurrentFlag,e.rowguid,e.ModifiedDate
+
+
+
 SELECT e.*
 FROM Sales.SalesPerson sp 
 	RIGHT JOIN Sales.SalesOrderHeader soh ON sp.BusinessEntityID = soh.SalesPersonID 
