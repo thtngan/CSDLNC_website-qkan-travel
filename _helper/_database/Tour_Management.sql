@@ -4,7 +4,8 @@ LOG ON
 ( NAME = qltour_log, FILENAME = 'C:\CSDL\qltour_log.ldf', SIZE = 10, FILEGROWTH = 5)*/
 USE qltour
 GO
-/*DROP TABLE ROSTER
+/*
+DROP TABLE ROSTER
 DROP TABLE INVOICE_RECORD
 DROP TABLE TOUR_DETAIL
 DROP TABLE INVOICE
@@ -62,7 +63,7 @@ CREATE TABLE CUSTOMER
 	membership varchar(7) DEFAULT 'NONE' not null,
 	id_no char(12) UNIQUE,
 	CHECK(membership = 'NONE' OR membership = 'MEMBER' OR membership = 'SILVER' OR membership = 'GOLD' OR membership = 'DIAMOND'),
-	CHECK(DATEDIFF(YEAR,dob,GETDATE()) > 2)
+	--CHECK(DATEDIFF(YEAR,dob,GETDATE()) > 2)
 )
 ---------------------------------------------------
 -- PASSPORT
@@ -103,42 +104,42 @@ CREATE TABLE STAFF
 	staff_address varchar(100) NOT null,
 	staff_type_id int NOT NULL,
 	id_no char(12) UNIQUE NOT NULL,
-	manager_id int NOT NULL
+	manager_id int
 )
 ---------------------------------------------------
 -- STAFF_TYPE
 CREATE TABLE STAFF_TYPE
 (
 	id int identity(1,1) not null primary key,
-	staff_type_name varchar(50)
+	staff_type_name varchar(50) UNIQUE
 )
 ---------------------------------------------------
 -- TIMESHEETS
 CREATE TABLE TIMESHEETS
 (
-	staff_id int not null,
-	presence_date date not null default GETDATE(),
-	entry_time time not null default GETDATE(),
+	staff_id int NOT NULL,
+	presence_date date NOT NULL default GETDATE(),
+	entry_time time NOT NULL default GETDATE(),
 	out_time time,
 	note text,
 	primary key(staff_id, presence_date),
-	check (out_time = null  or out_time > entry_time)
+	check (out_time = NULL or out_time > entry_time)
 )
 ---------------------------------------------------
 -- COUNTRY
 CREATE TABLE COUNTRY
 (
-	id int identity(1,1) not null primary key,
-	country_code char(3),
-	country_name varchar(50) not null
+	id int identity(1,1) NOT NULL primary key,
+	country_code char(3) UNIQUE,
+	country_name varchar(50) NOT NULL UNIQUE
 )
 ---------------------------------------------------
 -- CITY
 CREATE TABLE CITY
 (
-	id int identity(1,1) not null primary key,
-	city_name varchar(50) not null,
-	country_id int not null
+	id int identity(1,1) NOT NULL primary key,
+	city_name varchar(50) NOT NULL UNIQUE,
+	country_id int NOT NULL
 )
 ---------------------------------------------------
 -- TOUR
@@ -157,6 +158,7 @@ CREATE TABLE TOUR
 	img image,
 	descriptions text,
 	note text,
+	CHECK(departure_id <> departure_id)
 )
 ---------------------------------------------------
 -- TOUR_DETAIL
@@ -185,20 +187,20 @@ CREATE TABLE ITINERARY
 -- FEEDBACK
 CREATE TABLE FEEDBACK
 (
-	tour_id int not null,
-	cust_id int not null,
-	rating tinyint not null,
+	tour_id int NOT NULL,
+	cust_id int NOT NULL,
+	rating tinyint NOT NULL,
 	descriptions text,
-	feedback_timestamp datetime not null default GETDATE(),
+	feedback_timestamp datetime NOT NULL default GETDATE(),
 	primary key(tour_id, cust_id),
-	CHECK (rating < 6 and rating > 0)
+	CHECK (rating BETWEEN 1 AND 5)
 )
 ---------------------------------------------------
 -- PARTNER_TYPE
 CREATE TABLE PARTNER_TYPE
 (
-	id int identity(1,1) not null primary key,
-	partner_type_name varchar(50)
+	id int identity(1,1) NOT NULL primary key,
+	partner_type_name varchar(50) UNIQUE
 )
 ---------------------------------------------------
 -- PARTNERS
@@ -218,14 +220,14 @@ CREATE TABLE PARTNERS
 CREATE TABLE ROOM_TYPE
 (
 	id int identity(1,1) not null primary key,
-	room_type_name varchar(50)
+	room_type_name varchar(50) UNIQUE
 )
 ---------------------------------------------------
 -- TICKET_TYPE
 CREATE TABLE TICKET_TYPE
 (
 	id int identity(1,1) not null primary key,
-	ticket_type_name varchar(50)
+	ticket_type_name varchar(50) UNIQUE
 )
 ---------------------------------------------------
 -- HOTEL_SERVICE
@@ -553,9 +555,10 @@ AS
 		INSERT INTO INVOICE_RECORD(
 			invoice_id,
 			rec_timestamp,
+			invoice_status,
 			operation
 		)
-		SELECT ins.id, GETDATE(), 'INS'
+		SELECT ins.id, GETDATE(), ins.invoice_status, 'INS'
 		FROM inserted ins
 	END
 	ELSE
@@ -664,5 +667,5 @@ CREATE VIEW v_revenue_1year (
 GO
 ---------------------------------------------------
 ---------------------------------------------------
-set dateformat DMY
+set dateformat MDY
 GO

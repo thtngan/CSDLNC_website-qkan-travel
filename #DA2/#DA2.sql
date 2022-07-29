@@ -8,6 +8,7 @@ FROM Sales.SalesOrderDetail sod
 	LEFT JOIN Production.Product p2 ON sod.ProductID = p2.ProductID 
 	JOIN Sales.SalesOrderHeader soh ON soh.SalesOrderID = sod.SalesOrderID 
 WHERE soh.OrderDate  BETWEEN '7/20/2012' AND '7/20/2022'
+
  
 --2b. Cho danh sách các saleperson làm việc/bán hàng online trong tháng 7/2011.
 
@@ -17,29 +18,52 @@ CREATE NONCLUSTERED INDEX [_dta_index_SalesOrderHeader_6_1922105888__K3_K1_K12] 
 	[SalesOrderID] ASC,
 	[SalesPersonID] ASC
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
-
-
-SELECT e.*
-FROM Sales.SalesPerson sp 
-	RIGHT JOIN Sales.SalesOrderHeader soh ON sp.BusinessEntityID = soh.SalesPersonID 
-	LEFT JOIN HumanResources.Employee e ON e.BusinessEntityID = sp.BusinessEntityID 
-WHERE soh.OrderDate BETWEEN '20110701' AND '20110731' AND soh.SalesPersonID IS NOT NULL 
+DROP INDEX [_dta_index_SalesOrderHeader_6_1922105888__K3_K1_K12] ON [Sales].[SalesOrderHeader]
 
 SELECT e.*
 FROM Sales.SalesPerson sp 
 	RIGHT JOIN Sales.SalesOrderHeader soh ON sp.BusinessEntityID = soh.SalesPersonID 
 	LEFT JOIN HumanResources.Employee e ON e.BusinessEntityID = sp.BusinessEntityID 
-WHERE soh.OrderDate BETWEEN '20110701' AND '20110731' AND soh.SalesPersonID IS NOT NULL GROUP BY e.BusinessEntityID, e.NationalIDNumber, e.LoginID, e.OrganizationNode,e.OrganizationLevel, e.JobTitle,e.BirthDate,e.MaritalStatus,e.Gender,e.HireDate,e.SalariedFlag,e.VacationHours,e.SickLeaveHours,e.CurrentFlag,e.rowguid,e.ModifiedDate
-
-
+WHERE MONTH(soh.OrderDate) = 7 AND YEAR(soh.OrderDate) = 2011 AND soh.SalesPersonID IS NOT NULL
 
 SELECT e.*
 FROM Sales.SalesPerson sp 
 	RIGHT JOIN Sales.SalesOrderHeader soh ON sp.BusinessEntityID = soh.SalesPersonID 
 	LEFT JOIN HumanResources.Employee e ON e.BusinessEntityID = sp.BusinessEntityID 
-WHERE MONTH(soh.OrderDate) = 7 AND YEAR(soh.OrderDate) = 2011
+WHERE soh.OrderDate BETWEEN '20110701' AND '20110731' AND soh.SalesPersonID IS NOT NULL
+
+SELECT e.*
+FROM HumanResources.Employee e
+WHERE EXISTS(SELECT * 
+	FROM Sales.SalesPerson sp 
+	WHERE sp.BusinessEntityID = e.BusinessEntityID AND EXISTS (SELECT * 
+		FROM Sales.SalesOrderHeader soh 
+		WHERE sp.BusinessEntityID = soh.SalesPersonID 
+			AND soh.OrderDate BETWEEN '20110701' AND '20110731' 
+			AND soh.SalesPersonID IS NOT NULL))
 
 --2c. Nâng cao: cho danh sách các thành phần cấu thành “bicycles” (gợi ý: SQL Server Recursive CTE)
+DROP INDEX [_dta_index_BillOfMaterials_6_1157579162__K2_K5_K3_8] ON [Production].[BillOfMaterials]
+DROP INDEX [_dta_index_Product_6_482100758__K1_K6_2] ON [Production].[Product]
+GO
+CREATE NONCLUSTERED INDEX [_dta_index_BillOfMaterials_6_1157579162__K2_K5_K3_8] ON [Production].[BillOfMaterials]
+(
+	[ProductAssemblyID] ASC,
+	[EndDate] ASC,
+	[ComponentID] ASC
+)
+INCLUDE([PerAssemblyQty]) WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+GO 
+SET ANSI_PADDING ON
+
+CREATE NONCLUSTERED INDEX [_dta_index_Product_6_482100758__K1_K6_2] ON [Production].[Product]
+(
+	[ProductID] ASC,
+	[Color] ASC
+)
+INCLUDE([Name]) WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+GO 
+
 WITH cte_BOM (ProductID, Name, Color, Quantity, ProductLevel, ProductAssemblyID, Sort)
 AS  (SELECT P.ProductID,
             CAST (P.Name AS VARCHAR (100)),

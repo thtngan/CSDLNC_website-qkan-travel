@@ -24,3 +24,6 @@ BEGIN
 				ROLLBACK TRANSACTION
 		END CATCH
 END
+SELECT c.city_name FROM CITY c GROUP  BY c.city_name
+SELECT country_name FROM COUNTRY c GROUP BY c.country_name
+SELECT * FROM TOUR t WHERE t.destination_id = 211 AND t.departure_id = 236 AND t.depart_date = '19700622'
