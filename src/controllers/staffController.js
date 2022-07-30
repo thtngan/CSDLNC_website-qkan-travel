@@ -3,7 +3,7 @@ const sequelize = require('sequelize');
 const { DataTypes } = require('sequelize');
 const db = require('../../_helper/db');
 const Staff = db.Staff;
-
+// const seq = require("../../_helper/db")
 
 module.exports = {
   getAllStaffs,
@@ -47,27 +47,32 @@ async function getStaffById(Sid) {
 
 async function createStaff(addstaff) {
   console.log(addstaff)
+  db.sequelize.transaction(async transaction => {
+    try{
+      await db.sequelize.query(
+        "INSERT INTO ACCOUNT (email , pass, roles, active)" + 
+        " VALUES (?,?,?,?)",
+        {
+            replacements: [addstaff.email, "123456789", 1, 1],
+            type: sequelize.QueryTypes.INSERT
+        }
+      )
 
-  await db.sequelize.query(
-    "INSERT INTO ACCOUNT (email , pass, roles, active)" + 
-    " VALUES (?,?,?,?)",
-    {
-        replacements: [addstaff.email, "123456789", 1, 1],
-        type: sequelize.QueryTypes.INSERT
+      await db.sequelize.query(
+        "INSERT INTO STAFF (staff_name, gender, dob, tele, email, staff_address, staff_type_id, id_no, manager_id)" + 
+        " VALUES (?,?,?,?,?,?,?,?,?)",
+        {
+            replacements: [addstaff.name, addstaff.gender, addstaff.dob, addstaff.tele, addstaff.email, addstaff.address, addstaff.type, addstaff.idNumber, addstaff.managerId],
+            type: sequelize.QueryTypes.INSERT
+        }
+      )
+      transaction.commit();
+    }catch (error) {
+      transaction.rollback();
+      throw `TRANSACTION_ERROR`;
     }
-  ).catch((error) => console.error(error));
-
-  const result = await db.sequelize.query(
-    "INSERT INTO STAFF (staff_name, gender, dob, tele, email, staff_address, staff_type_id, id_no, manager_id)" + 
-    " VALUES (?,?,?,?,?,?,?,?,?)",
-    {
-        replacements: [addstaff.name, addstaff.gender, addstaff.dob, addstaff.tele, addstaff.email, addstaff.address, addstaff.type, addstaff.idNumber, addstaff.managerId],
-        type: sequelize.QueryTypes.INSERT
-    }
-  ).catch((error) => console.error(error));
-  console.log(result)
-  return result
-}
+})
+};
 
 async function updateStaff(addstaff) {
   console.log(addstaff)
@@ -84,4 +89,4 @@ async function updateStaff(addstaff) {
   
   console.log(result)
   return result
-}
+  }
