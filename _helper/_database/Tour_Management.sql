@@ -1,5 +1,5 @@
 /*CREATE DATABASE qltour ON PRIMARY
-( NAME = qltour_data, FILENAME = 'C:\CSDL\qltour_data.mdf', SIZE = 10, MAXSIZE = 1000, FILEGROWTH = 10)
+( NAME = qltour_data, FILENAME = 'C:\CSDL\qltour_data.mdf', SIZE = 10, MAXSIZE = 10000, FILEGROWTH = 10)
 LOG ON
 ( NAME = qltour_log, FILENAME = 'C:\CSDL\qltour_log.ldf', SIZE = 10, FILEGROWTH = 5)*/
 USE qltour
@@ -63,7 +63,7 @@ CREATE TABLE CUSTOMER
 	membership varchar(7) DEFAULT 'NONE' not null,
 	id_no char(12) UNIQUE,
 	CHECK(membership = 'NONE' OR membership = 'MEMBER' OR membership = 'SILVER' OR membership = 'GOLD' OR membership = 'DIAMOND'),
-	--CHECK(DATEDIFF(YEAR,dob,GETDATE()) > 2)
+	CHECK(DATEDIFF(YEAR,dob,GETDATE()) > 2)
 )
 ---------------------------------------------------
 -- PASSPORT
@@ -158,7 +158,8 @@ CREATE TABLE TOUR
 	img image,
 	descriptions text,
 	note text,
-	CHECK(departure_id <> departure_id)
+	CHECK(DATEDIFF(DAY, depart_date, end_date) > 0 AND DATEDIFF(DAY,register_date,depart_date) >= 0),
+	CHECK(cur_quantity <= max_quantity)
 )
 ---------------------------------------------------
 -- TOUR_DETAIL
@@ -625,6 +626,25 @@ BEGIN
 		UPDATE CUSTOMER SET membership = 'SILVER' WHERE id = @cust_id
 	ELSE IF @promo > 10000000
 		UPDATE CUSTOMER SET membership = 'MEMBER' WHERE id = @cust_id
+END
+GO
+---------------------------------------------------
+---------------------------------------------------
+-- DROP TRIGGER tr_tour_detail
+CREATE TRIGGER tr_tour_detail
+ON TOUR_DETAIL
+AFTER INSERT
+AS
+DECLARE @count int, @max int, @dob date
+BEGIN
+	SELECT @count = COUNT(*) FROM TOUR_DETAIL TD JOIN inserted INS ON TD.tour_id = INS.tour_id
+	SELECT @max = max_quantity FROM TOUR T JOIN inserted INS ON T.id = INS.tour_id
+	IF @count >= @max
+	BEGIN 
+		RAISERROR ('Out of bound',16,1)
+		ROLLBACK
+		RETURN;
+	END
 END
 GO
 ---------------------------------------------------
