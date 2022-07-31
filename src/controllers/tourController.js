@@ -7,7 +7,9 @@ const Country = db.Country;
 
 module.exports = {
     getAllTours,
-    getTourById
+    getTourById,
+    getAllCity,
+    searchTour
     // getById,
     // create,
     // update,
@@ -39,6 +41,33 @@ async function getTourById(Tid) {
         .catch((error) => console.error(error));
 
     // console.log(JSON.stringify(tours));
+
+    return tours;
+}
+
+async function getAllCity() {
+    const city = await db.sequelize.query(
+        "SELECT city_name,id FROM CITY",
+        {
+            type: sequelize.QueryTypes.SELECT
+        }
+    )
+        .catch((error) => console.error(error));
+
+    // console.log(JSON.stringify(city));
+    return city;
+}
+
+async function searchTour(depart, arrival, startDate) {
+    const tours = await db.sequelize.query(
+        "SELECT t.*, c1.city_name as destination_city, c2.city_name as departure_city FROM TOUR t FULL OUTER JOIN CITY c1 ON c1.id = t.destination_id FULL OUTER JOIN CITY c2 ON c2.id = t.departure_id"
+        + " Where destination_id = ? AND departure_id = ? AND depart_date = ?",
+        {
+            replacements: [arrival, depart, startDate],
+            type: sequelize.QueryTypes.SELECT
+        }
+    )
+        .catch((error) => console.error(error));
 
     return tours;
 }
