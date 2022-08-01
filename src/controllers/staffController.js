@@ -9,7 +9,8 @@ module.exports = {
   getAllStaffs,
   getStaffById,
   createStaff,
-  updateStaff
+  updateStaff,
+  getStaffByName
   // getById,
   // create,
   // update,
@@ -18,7 +19,7 @@ module.exports = {
 
 async function getAllStaffs() {
   const staffs = await db.sequelize.query(
-      "SELECT s.*, t.staff_type_name FROM STAFF s FULL OUTER JOIN STAFF_TYPE t ON s.staff_type_id = t.id",
+      "SELECT top (1000) s.*, t.staff_type_name FROM STAFF s FULL OUTER JOIN STAFF_TYPE t ON s.staff_type_id = t.id",
       {
           type: sequelize.QueryTypes.SELECT
       }
@@ -89,4 +90,21 @@ async function updateStaff(addstaff) {
   
   console.log(result)
   return result
+  };
+
+  async function getStaffByName(name) {
+    name = name+ '%'
+    console.log(name)
+    const staffs = await db.sequelize.query(
+        "SELECT s.*, t.staff_type_name FROM STAFF s FULL OUTER JOIN STAFF_TYPE t ON s.staff_type_id = t.id Where s.staff_name LIKE ?",
+        {
+            replacements: [name],
+            type: sequelize.QueryTypes.SELECT
+        }
+    )
+        .catch((error) => console.error(error));
+  
+    // console.log(JSON.stringify(tours));
+    console.log
+    return staffs;
   }

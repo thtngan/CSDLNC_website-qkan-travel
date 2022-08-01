@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const {getAllStaffs, getStaffById, createStaff, updateStaff} = require('../controllers/staffController');
+const {getAllStaffs, getStaffById, createStaff, updateStaff, getStaffByName} = require('../controllers/staffController');
 
 
 /*---- Routes ----*/
@@ -94,4 +94,17 @@ router.post('/editstaff', async (req, res, next)=>{
   }
 });
 
+router.get('/search/:name', async (req, res, next)=>{
+  try {
+    console.log(req.params.name)
+    const staffs = await getStaffByName(req.params.name);
+      // res.status(200).json({tour: tour});
+      // console.log(staffs[0])
+      res.render('./Admin/staffSearch', { staffList: staffs});
+
+  } catch(e) {
+      console.log(e);
+      res.sendStatus(500);
+  }
+});
 module.exports = router;
