@@ -18,6 +18,8 @@ BULK INSERT INVOICE
 SELECT * FROM TOUR t WHERE t.depart_date = '19700904'
 	AND EXISTS (SELECT * FROM CITY c WHERE c.city_name = 'Svetogorsk' AND c.id = T.destination_id)
 	AND EXISTS (SELECT * FROM CITY c WHERE c.city_name = 'Seputih' AND c.id = T.departure_id)
+
+
 CREATE NONCLUSTERED INDEX [_dta_index_TOUR_5_1943834137__K5_K3_K4_1_2_6_7_8_9_10] ON [dbo].[TOUR]
 (
 	[depart_date] ASC,
@@ -35,4 +37,6 @@ CREATE NONCLUSTERED INDEX [_dta_index_STAFF_5_1639833054__K2_1_3_4_5_6_7_8_9_10]
 	[staff_name] ASC
 )
 INCLUDE([id],[gender],[dob],[tele],[email],[staff_address],[staff_type_id],[id_no],[manager_id]) WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+
+
 SELECT * FROM STAFF s WHERE s.staff_name LIKE 'Che%'

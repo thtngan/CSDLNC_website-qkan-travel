@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-const {getAllStaffs, getStaffById, createStaff, updateStaff, getStaffByName} = require('../controllers/staffController');
+const {getAllStaffs, getStaffById, createStaff, updateStaff, getStaffByName, getRevenue, getIncoming} 
+        = require('../controllers/staffController');
 
 
 /*---- Routes ----*/
@@ -10,6 +11,65 @@ const {getAllStaffs, getStaffById, createStaff, updateStaff, getStaffByName} = r
 // router.put('/:id', updateSchema, update);
 // router.delete('/:id', _delete);
 
+router.get('/', async (req, res, next)=>{
+  try {
+      const revenue = await getRevenue();
+      // console.log("start")
+      // console.log(revenue)
+      // console.log("end")
+    //   revenue.sort(function(a, b) {
+    //     return parseFloat(a.price) - parseFloat(b.price);
+    // });
+      var year = revenue.map(a => a.year);
+      var reve = revenue.map(a => parseInt(a.revenue));
+      const line = {"yearList": year,"revenuList": reve}
+      console.log(line)
+      res.status(200);
+      res.render('./Admin/index',{lineChart:line});
+
+      // res.render('./Admin/index', { staffList: staffs});
+
+  } catch(e) {
+      console.log(e);
+      res.sendStatus(500);
+  }
+});
+
+router.get('/getRevenue', async (req, res, next)=>{
+  try {
+      const revenue = await getRevenue();
+      var year = revenue.map(a => a.year);
+      var reve = revenue.map(a => a.revenue);
+      const line = {"yearList": year,"revenuList": reve}
+      console.log(line)
+      res.send({lineChart:line});
+
+      // res.render('./Admin/index', { staffList: staffs});
+
+  } catch(e) {
+      console.log(e);
+      res.sendStatus(500);
+  }
+});
+
+router.get('/getIncoming', async (req, res, next)=>{
+  try {
+      const incoming = await getIncoming();
+      var name = incoming.map(a => a.tour_name);
+      var income = incoming.map(a => a.incoming);
+      var spend = incoming.map(a => a.spending);
+
+      const bar = {"nameList": name,"incomeList": income, "spendList":spend}
+      console.log(bar)
+      res.send({barChart:bar});
+
+      // res.render('./Admin/index', { staffList: staffs});
+
+  } catch(e) {
+      console.log(e);
+      res.sendStatus(500);
+  }
+});
 
 //Get all staff
 router.get('/staff/:id', async (req, res, next)=>{
