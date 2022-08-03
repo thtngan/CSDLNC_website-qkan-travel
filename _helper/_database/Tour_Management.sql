@@ -7,7 +7,6 @@ GO
 /*
 DROP TABLE ROSTER
 DROP TABLE INVOICE_RECORD
-DROP TABLE TOUR_DETAIL
 DROP TABLE INVOICE
 DROP TABLE TIMESHEETS
 DROP TABLE ITINERARY
@@ -160,16 +159,6 @@ CREATE TABLE TOUR
 	note text,
 	CHECK(DATEDIFF(DAY, depart_date, end_date) > 0 AND DATEDIFF(DAY,register_date,depart_date) >= 0),
 	CHECK(cur_quantity <= max_quantity)
-)
----------------------------------------------------
--- TOUR_DETAIL
-CREATE TABLE TOUR_DETAIL
-(
-	tour_id int not null,
-	cust_id int not null,
-	invoice_id int not null,
-	note text,
-	primary key (tour_id, cust_id)
 )
 ---------------------------------------------------
 -- ITINERARY
@@ -446,11 +435,6 @@ ALTER TABLE HOTEL_BOOKING ADD CONSTRAINT FK02_HOTEL_BOOKING FOREIGN KEY(hotel_se
 ALTER TABLE TRANSPORT_BOOKING ADD CONSTRAINT FK01_TRANSPORT_BOOKING FOREIGN KEY(tour_id) REFERENCES TOUR(id)
 ALTER TABLE TRANSPORT_BOOKING ADD CONSTRAINT FK02_TRANSPORT_BOOKING FOREIGN KEY(transport_service_id) REFERENCES TRANSPORT_SERVICE(id)
 
--- Foreign key for table TOUR_DETAIL
-ALTER TABLE TOUR_DETAIL ADD CONSTRAINT FK01_TOUR_DETAIL FOREIGN KEY(tour_id) REFERENCES TOUR(id)
-ALTER TABLE TOUR_DETAIL ADD CONSTRAINT FK02_TOUR_DETAIL FOREIGN KEY(cust_id) REFERENCES CUSTOMER(id)
-ALTER TABLE TOUR_DETAIL ADD CONSTRAINT FK03_TOUR_DETAIL FOREIGN KEY(invoice_id) REFERENCES INVOICE(id)
-
 -- Foreign key for table PASSPORT
 ALTER TABLE PASSPORT ADD CONSTRAINT FK01_PASSPORT FOREIGN KEY(cust_id) REFERENCES CUSTOMER(id)
 ALTER TABLE PASSPORT ADD CONSTRAINT FK02_PASSPORT FOREIGN KEY(country_id) REFERENCES COUNTRY(id)
@@ -626,25 +610,6 @@ BEGIN
 		UPDATE CUSTOMER SET membership = 'SILVER' WHERE id = @cust_id
 	ELSE IF @promo > 10000000
 		UPDATE CUSTOMER SET membership = 'MEMBER' WHERE id = @cust_id
-END
-GO
----------------------------------------------------
----------------------------------------------------
--- DROP TRIGGER tr_tour_detail
-CREATE TRIGGER tr_tour_detail
-ON TOUR_DETAIL
-AFTER INSERT
-AS
-DECLARE @count int, @max int, @dob date
-BEGIN
-	SELECT @count = COUNT(*) FROM TOUR_DETAIL TD JOIN inserted INS ON TD.tour_id = INS.tour_id
-	SELECT @max = max_quantity FROM TOUR T JOIN inserted INS ON T.id = INS.tour_id
-	IF @count >= @max
-	BEGIN 
-		RAISERROR ('Out of bound',16,1)
-		ROLLBACK
-		RETURN;
-	END
 END
 GO
 ---------------------------------------------------
