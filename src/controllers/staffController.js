@@ -9,7 +9,10 @@ module.exports = {
   getAllStaffs,
   getStaffById,
   createStaff,
-  updateStaff
+  updateStaff,
+  getStaffByName,
+  getRevenue,
+  getIncoming
   // getById,
   // create,
   // update,
@@ -18,7 +21,7 @@ module.exports = {
 
 async function getAllStaffs() {
   const staffs = await db.sequelize.query(
-      "SELECT s.*, t.staff_type_name FROM STAFF s FULL OUTER JOIN STAFF_TYPE t ON s.staff_type_id = t.id",
+      "SELECT top(50000) s.*, t.staff_type_name FROM STAFF s LEFT JOIN STAFF_TYPE t ON s.staff_type_id = t.id",
       {
           type: sequelize.QueryTypes.SELECT
       }
@@ -89,4 +92,41 @@ async function updateStaff(addstaff) {
   
   console.log(result)
   return result
+  };
+
+  async function getStaffByName(name) {
+    name = name+ '%'
+    console.log(name)
+    const staffs = await db.sequelize.query(
+        "SELECT s.*, t.staff_type_name FROM STAFF s FULL OUTER JOIN STAFF_TYPE t ON s.staff_type_id = t.id Where s.staff_name LIKE ?",
+        {
+            replacements: [name],
+            type: sequelize.QueryTypes.SELECT
+        }
+    )
+        .catch((error) => console.error(error));
+  
+    // console.log(JSON.stringify(tours));
+    console.log
+    return staffs;
+  }
+
+  async function getRevenue() {
+    const result = await db.sequelize.query(
+      "Select year, revenue from v_revenue_1year order by year asc",
+      {
+          type: sequelize.QueryTypes.SELECT
+      }
+    ).catch((error) => console.error(error));
+    return result;
+  }
+
+  async function getIncoming() {
+    const result = await db.sequelize.query(
+      "Select top 20 tour_name, incoming, spending from v_incoming_spending order by tour_id asc",
+      {
+          type: sequelize.QueryTypes.SELECT
+      }
+    ).catch((error) => console.error(error));
+    return result;
   }
