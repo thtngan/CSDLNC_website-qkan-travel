@@ -20,7 +20,7 @@ SELECT * FROM TOUR t WHERE t.depart_date = '19990807'
 	AND EXISTS (SELECT * FROM CITY c WHERE c.city_name = 'Honolulu' AND c.id = T.departure_id)
 
 CREATE NONCLUSTERED INDEX [_dta_index_TOUR_5_1943834137__K5_K3_K4_1_2_6_7_8_9_10] ON [dbo].[TOUR]
-hba
+(
 	[depart_date] ASC,
 	[destination_id] ASC,
 	[departure_id] ASC
