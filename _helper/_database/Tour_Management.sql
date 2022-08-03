@@ -1,5 +1,5 @@
 /*CREATE DATABASE qltour ON PRIMARY
-( NAME = qltour_data, FILENAME = 'C:\CSDL\qltour_data.mdf', SIZE = 10, MAXSIZE = 10000, FILEGROWTH = 10)
+( NAME = qltour_data, FILENAME = 'C:\CSDL\qltour_data.mdf', SIZE = 10, MAXSIZE = UNLIMITED, FILEGROWTH = 10)
 LOG ON
 ( NAME = qltour_log, FILENAME = 'C:\CSDL\qltour_log.ldf', SIZE = 10, FILEGROWTH = 5)*/
 USE qltour

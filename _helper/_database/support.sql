@@ -14,18 +14,37 @@ CREATE DATABASE qltour_new
        (FILENAME = 'C:\CSDL\qltour_new.ldf')
     FOR ATTACH;
 GO
-use qltour_new
+USE master
+GO
+ALTER DATABASE [qltour_new]
+ADD FILE 
+    ( NAME = N'data03', FILENAME = N'D:\user_data\data03.ndf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+TO FILEGROUP [DATA]
+GO
+ 
+GO
+ALTER DATABASE [qltour] ADD FILEGROUP FG1
+GO
+ALTER DATABASE [qltour] 
+ADD FILE 
+    ( NAME = N'testfile01', FILENAME = N'C:\CSDL\qltour_data01.ndf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB ),
+TO FILEGROUP FG1
+
+
+GO
+use qltour
 select * from tour where depart_date > '2022-01-01'
 
 CREATE PARTITION FUNCTION pfTour (DATE)
 AS RANGE RIGHT FOR VALUES 
-('1983-01-01', '1996-01-01', '2009-01-01');
+('1987-01-01', '1997-01-01', '2007-01-01');
 CREATE PARTITION SCHEME psTour
 AS PARTITION pfTour ALL TO ([PRIMARY]) 
 GO
+
 CREATE PARTITION FUNCTION pfInvoice (DATETIME)
 AS RANGE RIGHT FOR VALUES 
-('1983-01-01', '1996-01-01', '2009-01-01');
+('2001-01-01', '2002-01-01');
 CREATE PARTITION SCHEME psInvoice
 AS PARTITION pfInvoice ALL TO ([PRIMARY]) 
 GO
@@ -35,15 +54,13 @@ FROM sys.partition_schemes ps
 INNER JOIN sys.partition_functions pf ON pf.function_id=ps.function_id
 INNER JOIN sys.partition_range_values prf ON pf.function_id=prf.function_id
 
-EXEC sp_helpindex 'TOUR';
-ALTER TABLE dbo.TOUR DROP CONSTRAINT PK__TOUR__3213E83F18B8FC10
 
-CREATE CLUSTERED INDEX IX_TOUR_depart_date ON dbo.TOUR (depart_date)
-  WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, 
-        ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) 
-  ON psTour(depart_date)
-  SELECT o.name objectname,i.name indexname, partition_id, partition_number, [rows]
+SELECT o.name objectname,i.name indexname, partition_id, partition_number, [rows]
 FROM sys.partitions p
 INNER JOIN sys.objects o ON o.object_id=p.object_id
 INNER JOIN sys.indexes i ON i.object_id=p.object_id and p.index_id=i.index_id
-WHERE o.name LIKE 'TOUR'
+WHERE o.name LIKE 'invoice'
+select * from tour where depart_date <= '19870101'
+select * from tour where depart_date between '19870101' and '19970101'
+select * from tour where depart_date between '19970101' and '20070101'
+select * from tour where depart_date > '20070101'
