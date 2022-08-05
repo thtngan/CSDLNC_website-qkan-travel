@@ -2,7 +2,7 @@
 ( NAME = qltour_data, FILENAME = 'C:\CSDL\qltour_data.mdf', SIZE = 10, MAXSIZE = UNLIMITED, FILEGROWTH = 10)
 LOG ON
 ( NAME = qltour_log, FILENAME = 'C:\CSDL\qltour_log.ldf', SIZE = 10, FILEGROWTH = 5)*/
-USE qltour
+USE qltour_NEW
 GO
 /*
 DROP TABLE ROSTER
@@ -44,8 +44,7 @@ CREATE TABLE ACCOUNT
 	email varchar(50) NOT NULL PRIMARY KEY,
 	pass varchar(50) NOT NULL,
 	roles tinyint NOT NULL,
-	active bit not null default 1,
-	CHECK(roles = 1 OR roles = 2 OR roles = 3 OR roles = 0)
+	active bit not null
 )
 ---------------------------------------------------
 -- CUSTOMER
@@ -57,12 +56,10 @@ CREATE TABLE CUSTOMER
 	dob DATE NOT null,
 	nation_id int NOT NULL,
 	tele varchar(12),
-	email varchar(50) unique,
+	email varchar(50),
 	cust_address varchar(100) NOT NULL,
-	membership varchar(7) DEFAULT 'NONE' not null,
-	id_no char(12) UNIQUE,
-	CHECK(membership = 'NONE' OR membership = 'MEMBER' OR membership = 'SILVER' OR membership = 'GOLD' OR membership = 'DIAMOND'),
-	CHECK(DATEDIFF(YEAR,dob,GETDATE()) > 2)
+	membership varchar(7) not null,
+	id_no char(12),
 )
 ---------------------------------------------------
 -- PASSPORT
@@ -99,10 +96,10 @@ CREATE TABLE STAFF
 	gender BIT NOT NULL,
 	dob DATE NOT NULL,
 	tele varchar(12) NOT null,
-	email varchar(50) not null unique,
+	email varchar(50) not null,
 	staff_address varchar(100) NOT null,
 	staff_type_id int NOT NULL,
-	id_no char(12) UNIQUE NOT NULL,
+	id_no char(12) NOT NULL,
 	manager_id int
 )
 ---------------------------------------------------
@@ -110,34 +107,33 @@ CREATE TABLE STAFF
 CREATE TABLE STAFF_TYPE
 (
 	id int identity(1,1) not null primary key,
-	staff_type_name varchar(50) UNIQUE
+	staff_type_name varchar(50)
 )
 ---------------------------------------------------
 -- TIMESHEETS
 CREATE TABLE TIMESHEETS
 (
 	staff_id int NOT NULL,
-	presence_date date NOT NULL default GETDATE(),
-	entry_time time NOT NULL default GETDATE(),
+	presence_date date NOT NULL,
+	entry_time time NOT NULL,
 	out_time time,
 	note text,
 	primary key(staff_id, presence_date),
-	check (out_time = NULL or out_time > entry_time)
 )
 ---------------------------------------------------
 -- COUNTRY
 CREATE TABLE COUNTRY
 (
 	id int identity(1,1) NOT NULL primary key,
-	country_code char(3) UNIQUE,
-	country_name varchar(50) NOT NULL UNIQUE
+	country_code char(3),
+	country_name varchar(50) NOT NULL
 )
 ---------------------------------------------------
 -- CITY
 CREATE TABLE CITY
 (
 	id int identity(1,1) NOT NULL primary key,
-	city_name varchar(50) NOT NULL UNIQUE,
+	city_name varchar(50) NOT NULL,
 	country_id int NOT NULL
 )
 ---------------------------------------------------
@@ -152,13 +148,11 @@ CREATE TABLE TOUR
 	end_date date not null,
 	price decimal(10,2),
 	register_date date,
-	max_quantity int not null check(max_quantity > 0),
-	cur_quantity int not null default 0 check(cur_quantity >= 0),
+	max_quantity int not null,
+	cur_quantity int not null,
 	img image,
 	descriptions text,
 	note text,
-	CHECK(DATEDIFF(DAY, depart_date, end_date) > 0 AND DATEDIFF(DAY,register_date,depart_date) >= 0),
-	CHECK(cur_quantity <= max_quantity)
 )
 ---------------------------------------------------
 -- ITINERARY
@@ -181,16 +175,15 @@ CREATE TABLE FEEDBACK
 	cust_id int NOT NULL,
 	rating tinyint NOT NULL,
 	descriptions text,
-	feedback_timestamp datetime NOT NULL default GETDATE(),
+	feedback_timestamp datetime NOT NULL,
 	primary key(tour_id, cust_id),
-	CHECK (rating BETWEEN 1 AND 5)
 )
 ---------------------------------------------------
 -- PARTNER_TYPE
 CREATE TABLE PARTNER_TYPE
 (
 	id int identity(1,1) NOT NULL primary key,
-	partner_type_name varchar(50) UNIQUE
+	partner_type_name varchar(50)
 )
 ---------------------------------------------------
 -- PARTNERS
@@ -198,11 +191,11 @@ CREATE TABLE PARTNERS
 (
 	id int identity(1,1) not null primary key,
 	partner_name varchar(50) not null,
-	email varchar(50) not null unique,
+	email varchar(50) not null,
 	city_id int not null,
 	partner_address varchar(50) not null,
 	descriptions text,
-	active bit not null default 0,
+	active bit not null,
 	partner_type_id int not null
 )
 ---------------------------------------------------
@@ -210,14 +203,14 @@ CREATE TABLE PARTNERS
 CREATE TABLE ROOM_TYPE
 (
 	id int identity(1,1) not null primary key,
-	room_type_name varchar(50) UNIQUE
+	room_type_name varchar(50)
 )
 ---------------------------------------------------
 -- TICKET_TYPE
 CREATE TABLE TICKET_TYPE
 (
 	id int identity(1,1) not null primary key,
-	ticket_type_name varchar(50) UNIQUE
+	ticket_type_name varchar(50)
 )
 ---------------------------------------------------
 -- HOTEL_SERVICE
@@ -227,7 +220,7 @@ CREATE TABLE HOTEL_SERVICE
 	partner_id int not null,
 	room_type_id int not null,
 	service_price decimal(10,2),
-	active bit not null default 0
+	active bit not null
 )
 ---------------------------------------------------
 -- TRANSPORT_SERVICE
@@ -239,7 +232,7 @@ CREATE TABLE TRANSPORT_SERVICE
 	from_city_id int not null,
 	to_city_id int,
 	service_price decimal(10,2),
-	active bit not null default 0
+	active bit not null
 )
 ---------------------------------------------------
 -- HOTEL_PRICE_RECORD
@@ -268,9 +261,8 @@ CREATE TABLE CONTRACTS
 	staff_id int not null,
 	active_date date not null,
 	end_date date not null,
-	contract_status varchar(8) not null default 'PENDING',
-	commission float NOT NULL,
-	CHECK (contract_status IN ('PENDING', 'APPROVED', 'RUNNING', 'EXPIRED', 'CANCELED'))
+	contract_status varchar(8) not null,
+	commission float NOT NULL
 )
 ---------------------------------------------------
 -- CONTRACT_RECORD
@@ -283,7 +275,6 @@ CREATE TABLE CONTRACT_RECORD
 	rec_timestamp datetime not null,
 	operation char(3) not null,
 	PRIMARY KEY (contract_id, rec_timestamp),
-	CHECK (operation = 'INS' or operation = 'UPD' or operation = 'DEL')
 )
 ---------------------------------------------------
 -- HOTEL_BOOKING
@@ -294,7 +285,6 @@ CREATE TABLE HOTEL_BOOKING
 	quantity int,
 	price decimal(10,2)
 	primary key (tour_id, hotel_service_id),
-	check (quantity > 0)
 )
 ---------------------------------------------------
 -- TRANSPORT_BOOKING
@@ -305,7 +295,6 @@ CREATE TABLE TRANSPORT_BOOKING
 	quantity int,
 	price decimal(10,2)
 	primary key (tour_id, transport_service_id),
-	check (quantity > 0)
 )
 ---------------------------------------------------
 -- INVOICE
@@ -314,28 +303,23 @@ CREATE TABLE INVOICE
 	id int identity(1,1) not null primary key,
 	cust_id int not null,
 	tour_id int not null,
-	order_date datetime not null default GETDATE(),
+	order_date datetime not null,
 	note text,
-	invoice_status varchar(10) default 'PENDING',
+	invoice_status varchar(10),
 	refunded_amount decimal(10,2),
-	payment_method char(4) not null default 'CASH',
+	payment_method char(4) not null,
 	price decimal(10,2),
-	quantity int not null check(quantity > 0),
-	CHECK(payment_method = 'CASH' or payment_method = 'CARD'),
-	CHECK (invoice_status IN ('PENDING', 'APPROVED', 'PAID', 'CANCELLING', 'CANCELED')),
-	UNIQUE (cust_id, tour_id)
+	quantity int not null
 )
 ---------------------------------------------------
 -- INVOICE_RECORD
 CREATE TABLE INVOICE_RECORD
 (
 	invoice_id int not null,
-	rec_timestamp datetime not null default GETDATE(),
+	rec_timestamp datetime not null,
 	invoice_status varchar(10),
 	operation char(3),
 	primary key (invoice_id, rec_timestamp),
-	CHECK (operation = 'INS' or operation = 'UPD' or operation = 'DEL'),
-	CHECK (invoice_status IN ('PENDING', 'APPROVED', 'PAID', 'CANCELLING', 'CANCELED'))
 )
 ---------------------------------------------------
 -- SHOPPING_CART
@@ -343,8 +327,7 @@ CREATE TABLE SHOPPING_CART
 (
 	cust_id int not null,
 	tour_id int not null,
-	quantity int not null,
-	CHECK (quantity > 0)
+	quantity int not null
 )
 ---------------------------------------------------
 --	ROSTER
@@ -363,7 +346,7 @@ ALTER TABLE CUSTOMER ADD CONSTRAINT FK01_CUSTOMER FOREIGN KEY(email) REFERENCES 
 ALTER TABLE CUSTOMER ADD CONSTRAINT FK02_CUSTOMER FOREIGN KEY(nation_id) REFERENCES COUNTRY(id)
 
 -- Foreign key for table STAFF
-ALTER TABLE STAFF ADD CONSTRAINT FK01_STAFF FOREIGN KEY(email) REFERENCES ACCOUNT(email)
+ALTER TABLE STAFF ADD CONSTRAINT FK01_STAFF FOREIGN KEY(email) REFERENCES ACCOUNT(email) ON DELETE CASCADE
 ALTER TABLE STAFF ADD CONSTRAINT FK02_STAFF FOREIGN KEY(staff_type_id) REFERENCES STAFF_TYPE(id)
 ALTER TABLE STAFF ADD CONSTRAINT FK03_STAFF FOREIGN KEY(manager_id) REFERENCES STAFF(id)
 
@@ -375,18 +358,18 @@ ALTER TABLE TOUR ADD CONSTRAINT FK01_TOUR FOREIGN KEY(destination_id) REFERENCES
 ALTER TABLE TOUR ADD CONSTRAINT FK02_TOUR FOREIGN KEY(departure_id) REFERENCES CITY(id)
 
 -- Foreign key for table ITENERARY
-ALTER TABLE ITINERARY ADD CONSTRAINT FK01_ITENERARY FOREIGN KEY(tour_id) REFERENCES TOUR(id)
+ALTER TABLE ITINERARY ADD CONSTRAINT FK01_ITENERARY FOREIGN KEY(tour_id) REFERENCES TOUR(id) ON DELETE CASCADE
 
 -- Foreign key for table FEEDBACK
 ALTER TABLE FEEDBACK ADD CONSTRAINT FK01_FEEDBACK FOREIGN KEY(tour_id) REFERENCES TOUR(id)
 ALTER TABLE FEEDBACK ADD CONSTRAINT FK02_FEEDBACK FOREIGN KEY(cust_id) REFERENCES CUSTOMER(id)
 
 -- Foreign key for table TIMESHEETS
-ALTER TABLE TIMESHEETS ADD CONSTRAINT FK01_TIMESHEETS FOREIGN KEY(staff_id) REFERENCES STAFF(id)
+ALTER TABLE TIMESHEETS ADD CONSTRAINT FK01_TIMESHEETS FOREIGN KEY(staff_id) REFERENCES STAFF(id) ON DELETE CASCADE
 
 -- Foreign key for table ROSTER
-ALTER TABLE ROSTER ADD CONSTRAINT FK01_ROSTER FOREIGN KEY(staff_id) REFERENCES STAFF(id)
-ALTER TABLE ROSTER ADD CONSTRAINT FK02_ROSTER FOREIGN KEY(tour_id) REFERENCES TOUR(id)
+ALTER TABLE ROSTER ADD CONSTRAINT FK01_ROSTER FOREIGN KEY(staff_id) REFERENCES STAFF(id) ON DELETE CASCADE
+ALTER TABLE ROSTER ADD CONSTRAINT FK02_ROSTER FOREIGN KEY(tour_id) REFERENCES TOUR(id) ON DELETE CASCADE
 
 -- Foreign key for table INVOICE
 ALTER TABLE INVOICE ADD CONSTRAINT FK01_INVOICE FOREIGN KEY(cust_id) REFERENCES CUSTOMER(id)
@@ -442,6 +425,108 @@ ALTER TABLE PASSPORT ADD CONSTRAINT FK02_PASSPORT FOREIGN KEY(country_id) REFERE
 -- Foreign key for table VISA
 ALTER TABLE VISA ADD CONSTRAINT FK01_VISA FOREIGN KEY(passport_id) REFERENCES PASSPORT(id)
 ALTER TABLE VISA ADD CONSTRAINT FK02_VISA FOREIGN KEY(country_id) REFERENCES COUNTRY(id)
+GO
+---------------------------------------------------
+---------------------------------------------------
+--Check Constraint for table ACCOUNT
+ALTER TABLE ACCOUNT ADD CONSTRAINT CK01_ACCOUNT CHECK(roles BETWEEN 0 AND 3)
+
+--Check Constraint for table CUSTOMER
+ALTER TABLE CUSTOMER ADD CONSTRAINT CK01_CUSTOMER CHECK(membership IN ('NONE','MEMBER','SILVER','GOLD','DIAMOND'))
+ALTER TABLE CUSTOMER ADD CONSTRAINT CK02_CUSTOMER CHECK(DATEDIFF(YEAR,dob,GETDATE()) > 2)
+
+--Check Constraint for table TIMESHEETS
+ALTER TABLE TIMESHEETS ADD CONSTRAINT CK01_TIMESHEETS CHECK(out_time = NULL or out_time > entry_time)
+
+--Check Constraint for table TOUR
+ALTER TABLE TOUR ADD CONSTRAINT CK01_TOUR CHECK(DATEDIFF(DAY, depart_date, end_date) > 0 AND DATEDIFF(DAY,register_date,depart_date) >= 0)
+ALTER TABLE TOUR ADD CONSTRAINT CK02_TOUR CHECK(cur_quantity >= 0)
+ALTER TABLE TOUR ADD CONSTRAINT CK03_TOUR CHECK(max_quantity > 0)
+ALTER TABLE TOUR ADD CONSTRAINT CK04_TOUR CHECK(cur_quantity <= max_quantity)
+	
+--Check Constraint for table FEEDBACK
+ALTER TABLE FEEDBACK ADD CONSTRAINT CK01_FEEDBACK CHECK (rating BETWEEN 1 AND 5)
+
+--Check Constraint for table CONTRACTS
+ALTER TABLE CONTRACTS ADD CONSTRAINT CK01_CONTRACTS CHECK (contract_status IN ('PENDING', 'APPROVED', 'RUNNING', 'EXPIRED', 'CANCELED'))
+
+--Check Constraint for table CONTRACT_RECORD
+ALTER TABLE CONTRACT_RECORD ADD CONSTRAINT CK01_CONTRACT_RECORD CHECK (operation IN ('INS', 'UPD', 'DEL'))
+
+--Check Constraint for table HOTEL_BOOKING
+ALTER TABLE HOTEL_BOOKING ADD CONSTRAINT CK01_HOTEL_BOOKING CHECK (quantity > 0)
+
+--Check Constraint for table TRANSPORT_BOOKING
+ALTER TABLE TRANSPORT_BOOKING ADD CONSTRAINT CK01_TRANSPORT_BOOKING CHECK (quantity > 0)
+
+--Check Constraint for table INVOICE
+ALTER TABLE INVOICE ADD CONSTRAINT CK01_INVOICE CHECK(payment_method IN ('CASH', 'CARD'))
+ALTER TABLE INVOICE ADD CONSTRAINT CK02_INVOICE CHECK(invoice_status IN ('PENDING', 'APPROVED', 'PAID', 'CANCELLING', 'CANCELED'))
+ALTER TABLE INVOICE ADD CONSTRAINT CK03_INVOICE CHECK(quantity > 0)	
+
+--Check Constraint for table SHOPPING_CART
+ALTER TABLE SHOPPING_CART ADD CONSTRAINT CK01_SHOPPING_CART CHECK(quantity > 0)	
+
+--Check Constraint for table INVOICE_RECORD
+ALTER TABLE INVOICE_RECORD ADD CONSTRAINT CK01_INVOICE_RECORD CHECK (operation IN ('INS', 'UPD', 'DEL'))
+ALTER TABLE INVOICE_RECORD ADD CONSTRAINT CK02_INVOICE_RECORD	CHECK (invoice_status IN ('PENDING', 'APPROVED', 'PAID', 'CANCELLING', 'CANCELED'))
+---------------------------------------------------
+---------------------------------------------------
+--Default Constraint for table ACCOUNT
+ALTER TABLE ACCOUNT ADD CONSTRAINT DF01_ACCOUNT DEFAULT(1) FOR active
+
+--Default Constraint for table CUSTOMER
+ALTER TABLE CUSTOMER ADD CONSTRAINT DF01_CUSTOMER DEFAULT('NONE') FOR membership
+
+--Default Constraint for table TIMESHEETS
+ALTER TABLE TIMESHEETS ADD CONSTRAINT DF01_TIMESHEETS DEFAULT(GETDATE()) FOR presence_date
+ALTER TABLE TIMESHEETS ADD CONSTRAINT DF02_TIMESHEETS DEFAULT(GETDATE()) FOR entry_time
+
+--Default Constraint for table TOUR
+ALTER TABLE TOUR ADD CONSTRAINT DF01_TOUR DEFAULT(0) FOR cur_quantity
+
+--Default Constraint for table FEEDBACK
+ALTER TABLE FEEDBACK ADD CONSTRAINT DF01_FEEDBACK DEFAULT(GETDATE()) FOR feedback_timestamp
+
+--Default Constraint for table CONTRACTS
+ALTER TABLE CONTRACTS ADD CONSTRAINT DF01_CONTRACTS DEFAULT('PENDING') FOR contract_status
+
+--Default Constraint for table INVOICE
+ALTER TABLE INVOICE ADD CONSTRAINT DF01_INVOICE DEFAULT(GETDATE()) FOR order_date
+ALTER TABLE INVOICE ADD CONSTRAINT DF02_INVOICE DEFAULT('PENDING') FOR invoice_status
+ALTER TABLE INVOICE ADD CONSTRAINT DF03_INVOICE DEFAULT('CASH') FOR payment_method
+
+---------------------------------------------------
+---------------------------------------------------
+-- Unique constraint for table CUSTOMER
+ALTER TABLE CUSTOMER ADD CONSTRAINT UQ01_CUSTOMER UNIQUE (email); 
+ALTER TABLE CUSTOMER ADD CONSTRAINT UQ02_CUSTOMER UNIQUE (id_no); 
+
+-- Unique constraint for table STAFF
+ALTER TABLE STAFF ADD CONSTRAINT UQ01_STAFF UNIQUE (email); 
+ALTER TABLE STAFF ADD CONSTRAINT UQ02_STAFF UNIQUE (id_no);
+
+-- Unique constraint for table STAFF_TYPE
+ALTER TABLE STAFF_TYPE ADD CONSTRAINT UQ01_STAFF_TYPE UNIQUE (staff_type_name); 
+
+-- Unique constraint for table COUNTRY
+ALTER TABLE COUNTRY ADD CONSTRAINT UQ01_COUNTRY UNIQUE (country_code, country_name); 
+
+-- Unique constraint for table CITY
+ALTER TABLE CITY ADD CONSTRAINT UQ01_CITY UNIQUE (city_name, country_id); 
+
+-- Unique constraint for table PARTNER_TYPE
+ALTER TABLE PARTNER_TYPE ADD CONSTRAINT UQ01_PARTNER_TYPE UNIQUE (partner_type_name); 
+
+-- Unique constraint for table PARTNERS
+ALTER TABLE PARTNERS ADD CONSTRAINT UQ01_PARTNERS UNIQUE (email); 
+
+-- Unique constraint for table ROOM_TYPE
+ALTER TABLE ROOM_TYPE ADD CONSTRAINT UQ01_ROOM_TYPE UNIQUE (room_type_name); 
+
+-- Unique constraint for table TICKET_TYPE
+ALTER TABLE TICKET_TYPE ADD CONSTRAINT UQ01_TICKET_TYPE UNIQUE (ticket_type_name); 
+
 GO
 ---------------------------------------------------
 ---------------------------------------------------
@@ -574,20 +659,6 @@ BEGIN
 	)
 	SELECT del.id, GETDATE(), 4,'DEL'
 	FROM deleted del
-END
-GO
----------------------------------------------------
----------------------------------------------------
--- CAP NHAT SO LUONG SLOT CUA TOUR
-CREATE TRIGGER tr_invoice_ins
-ON INVOICE
-AFTER INSERT, UPDATE, DELETE
-AS
-BEGIN
-	UPDATE TOUR SET cur_quantity = cur_quantity  - 
-		(SELECT quantity FROM inserted WHERE tour_id = TOUR.id) +
-		(SELECT quantity FROM deleted WHERE tour_id = TOUR.id)
-		FROM TOUR JOIN deleted del ON TOUR.id = del.tour_id		
 END
 GO
 ---------------------------------------------------

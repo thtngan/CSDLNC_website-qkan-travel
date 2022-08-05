@@ -11,36 +11,41 @@ WHERE soh.OrderDate  BETWEEN '7/20/2012' AND '7/20/2022'
 
  
 --2b. Cho danh sách các saleperson làm việc/bán hàng online trong tháng 7/2011.
+DROP INDEX [_dta_index_Person_6_274100017__K1_5_6_7] ON [Person].[Person]
+DROP INDEX [_dta_index_SalesOrderHeader_6_1922105888__K7_K3_K12] ON [Sales].[SalesOrderHeader]
 
-CREATE NONCLUSTERED INDEX [_dta_index_SalesOrderHeader_6_1922105888__K3_K1_K12] ON [Sales].[SalesOrderHeader]
+CREATE NONCLUSTERED INDEX [_dta_index_Person_6_274100017__K1_5_6_7] ON [Person].[Person]
 (
+	[BusinessEntityID] ASC
+)
+INCLUDE([FirstName],[MiddleName],[LastName]) WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [_dta_index_SalesOrderHeader_6_1922105888__K7_K3_K12] ON [Sales].[SalesOrderHeader]
+(
+	[OnlineOrderFlag] ASC,
 	[OrderDate] ASC,
-	[SalesOrderID] ASC,
 	[SalesPersonID] ASC
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
-DROP INDEX [_dta_index_SalesOrderHeader_6_1922105888__K3_K1_K12] ON [Sales].[SalesOrderHeader]
 
-SELECT e.*
-FROM Sales.SalesPerson sp 
+SELECT sp.BusinessEntityID, (sp.FirstName+' '+sp.MiddleName+' '+sp.LastName) as FullName
+FROM Sales.vSalesPerson sp 
 	RIGHT JOIN Sales.SalesOrderHeader soh ON sp.BusinessEntityID = soh.SalesPersonID 
-	LEFT JOIN HumanResources.Employee e ON e.BusinessEntityID = sp.BusinessEntityID 
-WHERE MONTH(soh.OrderDate) = 7 AND YEAR(soh.OrderDate) = 2011 AND soh.SalesPersonID IS NOT NULL
+WHERE MONTH(soh.OrderDate) = 7 AND YEAR(soh.OrderDate) = 2011 
+	AND soh. OnlineOrderFlag = 0
 
-SELECT e.*
-FROM Sales.SalesPerson sp 
+SELECT sp.BusinessEntityID, (sp.FirstName+' '+sp.MiddleName+' '+sp.LastName) as FullName
+FROM Sales.vSalesPerson sp 
 	RIGHT JOIN Sales.SalesOrderHeader soh ON sp.BusinessEntityID = soh.SalesPersonID 
-	LEFT JOIN HumanResources.Employee e ON e.BusinessEntityID = sp.BusinessEntityID 
-WHERE soh.OrderDate BETWEEN '20110701' AND '20110731' AND soh.SalesPersonID IS NOT NULL
+WHERE soh.OrderDate BETWEEN '20110701' AND '20110731' 
+	AND soh. OnlineOrderFlag = 0
 
-SELECT e.*
-FROM HumanResources.Employee e
-WHERE EXISTS(SELECT * 
-	FROM Sales.SalesPerson sp 
-	WHERE sp.BusinessEntityID = e.BusinessEntityID AND EXISTS (SELECT * 
+SELECT sp.BusinessEntityID, (sp.FirstName + ' ' + sp.MiddleName + ' ' + sp.LastName) as FullName
+FROM Sales.vSalesPerson sp 
+WHERE EXISTS (SELECT * 
 		FROM Sales.SalesOrderHeader soh 
 		WHERE sp.BusinessEntityID = soh.SalesPersonID 
 			AND soh.OrderDate BETWEEN '20110701' AND '20110731' 
-			AND soh.SalesPersonID IS NOT NULL))
+			AND soh. OnlineOrderFlag = 0)
 
 --2c. Nâng cao: cho danh sách các thành phần cấu thành “bicycles” (gợi ý: SQL Server Recursive CTE)
 DROP INDEX [_dta_index_BillOfMaterials_6_1157579162__K2_K5_K3_8] ON [Production].[BillOfMaterials]
