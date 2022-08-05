@@ -35,6 +35,20 @@ router.get('/', async (req, res, next)=>{
   }
 });
 
+router.get('/login', async (req, res, next)=>{
+  try {
+      
+      res.status(200);
+      res.render('./Admin/login');
+
+      // res.render('./Admin/index', { staffList: staffs});
+
+  } catch(e) {
+      console.log(e);
+      res.sendStatus(500);
+  }
+});
+
 router.get('/getRevenue', async (req, res, next)=>{
   try {
       const revenue = await getRevenue();
@@ -75,6 +89,7 @@ router.get('/getIncoming', async (req, res, next)=>{
 router.get('/staff/:id', async (req, res, next)=>{
   try {
       const staffs = await getStaffById(req.params.id);
+      console.log(staffs)
       res.status(200);
       res.render('./Admin/staff-details', { staffList: staffs});
 

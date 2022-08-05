@@ -42,26 +42,7 @@
             <a class="mobile_btn" id="mobile_btn">
             <i class="fas fa-bars"></i>
             </a>
-            <ul class="nav user-menu">
-               <li class="nav-item dropdown has-arrow">
-                  <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-                  <span class="user-img"><img class="rounded-circle" src="assets/img/profiles/avatar-01.jpg" width="31" alt="Ryan Taylor"></span>
-                  </a>
-                  <div class="dropdown-menu">
-                     <div class="user-header">
-                        <div class="avatar avatar-sm">
-                           <img src="assets/img/profiles/avatar-01.jpg" alt="User Image" class="avatar-img rounded-circle">
-                        </div>
-                        <div class="user-text">
-                           <h6>Ryan Taylor</h6>
-                           <p class="text-muted mb-0">Administrator</p>
-                        </div>
-                     </div>
-                     <a class="dropdown-item" href="profile.html">My Profile</a>
-                     <a class="dropdown-item" href="login.html">Logout</a>
-                  </div>
-               </li>
-            </ul>
+            
          </div>
          <div class="sidebar" id="sidebar">
             <div class="sidebar-inner slimscroll">
@@ -70,13 +51,8 @@
                      <li class="menu-title">
                         <span>Main Menu</span>
                      </li>
-                     <li class="submenu">
-                        <a href="#"><i class="fas fa-address-card"></i> <span> Dashboard</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li><a href="index.html">Staff Dashboard</a></li>
-                           <li><a href="teacher-dashboard.html">Tour Dashboard</a></li>
-                           <!-- <li><a href="student-dashboard.html">Student Dashboard</a></li> -->
-                        </ul>
+                     <li class="ssubmenu">
+                        <a href="../../admin"><i class="fas fa-address-card"></i> <span> Dashboard</span></a>
                      </li>
                      <li class="ssubmenu active">
                         <a href="students.html"><i class="fas fa-user-graduate"></i><span> Staffs </span></span></a>
@@ -154,7 +130,7 @@
                         </div>
                      </div>
                      <div class="col-auto text-right float-right ml-auto">
-                        <a href="./add-staff" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+                        <a href="../add-staff" class="btn btn-primary"><i class="fas fa-plus"></i></a>
                      </div>
                   </div>
                </div>
@@ -169,7 +145,7 @@
                                        <th>ID</th>
                                        <th>Name</th>
                                        <th>Type</th>
-                                       <th>DOB</th>
+                                       <th>Date of Birth</th>
                                        <th>Mobile Number</th>
                                        <th class="text-right">Action</th>
                                     </tr>
@@ -183,15 +159,15 @@
                                           <td><%= staffList[i].id %></td>
                                           <td>
                                              <h2 class="table-avatar">
-                                                <a href="./staff/<%= staffList[i].id%>"><%= staffList[i].staff_name %></a>
+                                                <a href="../staff/<%= staffList[i].id%>"><%= staffList[i].staff_name %></a>
                                              </h2>
                                           </td>
                                           <td><%= staffList[i].staff_type_name %></td>
                                           <td><%= staffList[i].dob %></td>
-                                          <td><%= staffList[i].tele %></td>
+                                          <td><%= staffList[i].email %></td>
                                           <td class="text-right">
                                              <div class="actions">
-                                                <a href="./edit-staff/<%= staffList[i].id%>" class="btn btn-sm bg-success-light mr-2">
+                                                <a href="../edit-staff/<%= staffList[i].id%>" class="btn btn-sm bg-success-light mr-2">
                                                 <i class="fas fa-pen"></i>
                                                 </a>
                                                 <a href="#" class="btn btn-sm bg-danger-light">

@@ -21,7 +21,7 @@ module.exports = {
 
 async function getAllStaffs() {
   const staffs = await db.sequelize.query(
-      "SELECT top(50000) s.*, t.staff_type_name FROM STAFF s LEFT JOIN STAFF_TYPE t ON s.staff_type_id = t.id",
+      "SELECT top(100) s.*, t.staff_type_name FROM STAFF s LEFT JOIN STAFF_TYPE t ON s.staff_type_id = t.id",
       {
           type: sequelize.QueryTypes.SELECT
       }
