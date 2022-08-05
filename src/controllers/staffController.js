@@ -123,7 +123,7 @@ async function updateStaff(addstaff) {
 
   async function getIncoming() {
     const result = await db.sequelize.query(
-      "Select top 20 tour_name, incoming, spending from v_incoming_spending order by tour_id asc",
+      "Select top 15 tour_name, incoming, spending from v_incoming_spending order by incoming - spending asc",
       {
           type: sequelize.QueryTypes.SELECT
       }

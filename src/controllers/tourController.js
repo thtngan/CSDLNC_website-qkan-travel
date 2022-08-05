@@ -9,7 +9,10 @@ module.exports = {
     getAllTours,
     getTourById,
     getAllCity,
-    searchTour
+    searchTour,
+    searchTransport,
+    searchHotel,
+    bookTour
     // getById,
     // create,
     // update,
@@ -70,4 +73,55 @@ async function searchTour(depart, arrival, startDate) {
         .catch((error) => console.error(error));
 
     return tours;
+}
+
+
+async function searchTransport(departID) {
+    const tours = await db.sequelize.query(
+        "select se.id as id, ty.ticket_type_name as name from TRANSPORT_SERVICE se left join TICKET_TYPE ty"
+        + " on se.ticket_type_id = ty.id where se.from_city_id = ?",
+        {
+            replacements: [departID],
+            type: sequelize.QueryTypes.SELECT
+        }
+    )
+        .catch((error) => console.error(error));
+    return tours;
+}
+
+async function searchHotel() {
+    const tours = await db.sequelize.query(
+        "select se.id as id, ty.room_type_name as name from HOTEL_SERVICE se left join ROOM_TYPE ty"
+        + " on se.room_type_id = ty.id",
+        {
+            type: sequelize.QueryTypes.SELECT
+        }
+    )
+        .catch((error) => console.error(error));
+    return tours;
+}
+
+async function bookTour(info) {
+    // console.log(info.customerID)
+    // const custom_id = db.sequelize.define("custom_id", {
+    //     custom_id: {
+    //         type: db.sequelize.DataTypes.INTEGER,
+    //         allowNull: false
+    //     }
+    //  });
+     custom_id = parseInt(info.customerID)
+    const res = await db.sequelize
+    // .query('CALL sp_order_add (:cust_id, :tour_id, :quantity, :note, :payment_method, :hotel_service_id, :transport_service_id, :tour_price)', 
+    //       {
+    //         replacements: { cust_id: parseInt(info.customerID), tour_id: info.tourID, quantity: info.quantity, note: info.note, 
+    //             payment_method: info.payment, hotel_service_id: info.hotel, transport_service_id: info.transport, tour_price: info.price}
+    //     })
+    .query('EXEC sp_order_add @cust_id=?, @tour_id=?, @quantity=?, @note=?, @payment_method=?, @hotel_service_id=?, @transport_service_id=?, @tour_price=?', 
+          {
+            replacements: [ parseInt(info.customerID), parseInt(info.tourID), parseInt(info.quantity), "abc", 
+                info.payment, parseInt(info.hotel), parseInt(info.transport), parseFloat(info.price)],
+            type:sequelize.QueryTypes.RAW
+        })
+    .catch((error) => console.error(error));
+    return res;
 }

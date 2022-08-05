@@ -272,7 +272,7 @@
 												<div class="tg-trendingtrip">
 													<figure>
 														<a href="/tourbookingdetail/<%= tourList[i].id %>">
-															<img src="../../../images/tours/img-21.jpg" alt="image destinations">
+															<img src="../../../public/images/honolulu.jpg" alt="image destinations">
 															<div class="tg-hover">
 																<span class="tg-stars"><span></span></span>
 																<span class="tg-locationname"><%= tourList[i].destination_city %></span>
@@ -288,7 +288,7 @@
 															<h3><a href="/tourbookingdetail/<%= tourList[i].id %>"><%= tourList[i].tour_name %></a></h3>
 														</div>
 														<div class="tg-description">
-															<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh...</p>
+															<p><%= tourList[i].descriptions %></p>
 														</div>
 													</div>
 												</div>

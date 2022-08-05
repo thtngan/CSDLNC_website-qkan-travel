@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 // const tourService = require('../controllers/tourController');
-const {getAllTours, getTourById} = require('../controllers/tourController');
+const {getAllTours, getTourById, searchTransport, searchHotel, bookTour} = require('../controllers/tourController');
 
 
 /*---- Routes ----*/
@@ -23,18 +23,39 @@ router.get('/', async (req, res, next)=>{
 // router.post('/', createSchema, create);
 // router.put('/:id', updateSchema, update);
 // router.delete('/:id', _delete);
+router.post('/addtour', async (req, res, next)=>{
+  try {
+      // const staffs = await getAllStaffs();
+      // // res.status(200).json({tour: tour});
+      // console.log(req.body)
+      // console.log(req.params)
+      // await createStaff(req.body);
+      // res.json({
+      //   "message": "Product Created"
+      // });
+      console.log(req.body)
+      await bookTour(req.body)
+      res.sendStatus(201);
 
+  } catch(e) {
+      console.log(e);
+      res.sendStatus(500);
+  }
+});
 
 //Get all tour
 router.get('/tourbookingdetail/:id', async (req, res, next)=>{
   try {
       // const tour = await getAllTours();
       id = req.params.id;
-      console.log("id got by param: " + id)
       const tour = await getTourById(id);
       console.log(tour)
+      console.log("to transport an dhotel")
+      const transport = await searchTransport(tour[0].departure_id)
+      const hotel = await searchHotel()
+      console.log(transport)
       // res.status(200).json({tour: tour});
-      res.render('./Client/tourbookingdetail', { tourList: tour});
+      res.render('./Client/tourbookingdetail', { tourList: tour, transportList: transport, hotelList: hotel});
 
   } catch(e) {
       console.log(e);
@@ -68,5 +89,7 @@ router.get('/about-us', async (req, res, next)=>{
       res.sendStatus(500);
   }
 });
+
+
 
 module.exports = router;

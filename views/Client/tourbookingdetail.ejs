@@ -23,7 +23,9 @@
 	<link rel="stylesheet" href="../../public/css/main.css">
 	<link rel="stylesheet" href="../../public/css/color.css">
 	<link rel="stylesheet" href="../../public/css/responsive.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<script src="../../public/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+	<script src="../../public/js/bookTour.js"></script>
 </head>
 <body>
 	<!--[if lt IE 8]>
@@ -172,7 +174,7 @@
 		<!--************************************
 				Inner Banner Start
 		*************************************-->
-		<div class="tg-parallax tg-innerbanner" data-appear-top-offset="600" data-parallax="scroll" data-image-src="images/parallax/bgparallax-06.jpg">
+		<div class="tg-parallax tg-innerbanner" data-appear-top-offset="600" data-parallax="scroll" data-image-src="../../public/images/honolulu.jpg">
 			<div class="tg-sectionspace tg-haslayout">
 				<div class="container">
 					<div class="row">
@@ -185,6 +187,36 @@
 				Inner Banner End
 		*************************************-->
 		<!--************************************
+		
+		<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<div class="modal-body">
+			<h4 id="noti-price">Total price:</h4>
+			<h2>Choose pay method:</h2>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" name="payMethod" id="inlineRadio1" value="CASH">
+				<label class="form-check-label" for="inlineRadio1">Pay with cash</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" name="payMethod" id="inlineRadio2" value="CARD">
+				<label class="form-check-label" for="inlineRadio2">Pay with visa card</label>
+			</div>
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		  <button type="button" id="bookTourBtn" class="btn btn-primary">Book Tour</button>
+		</div>
+	  </div>
+	</div>
+  </div>
 				Main Start
 		*************************************-->
 		<main id="tg-main" class="tg-main tg-haslayout">
@@ -201,8 +233,10 @@
 									</div>
 									<div class="tg-pricearea">
 										<span>From</span>
-										<del>$ <%= tourList[0].price - 600 %></del>
+										<del id="lblPrice">$ <%= tourList[0].price - 600 %></del>
 										<h4>$ <%=  tourList[0].price %><sub>/ per person</sub></h4>
+										<input id="price" value="<%=  tourList[0].price %>"  type="hidden">
+										<input id="tourID" value="<%=  tourList[0].id %>"  type="hidden">
 									</div>
 									<div class="tg-description">
 										<p>There’s only 5 spot left. Join 19 others at Travelu’s experience this Saturday.</p>
@@ -212,7 +246,7 @@
 											<div class="form-group">
 												<div class="tg-formicon"><i class="icon-user-check"></i></div>
 												<span class="tg-select">
-													<select class="selectpicker" data-live-search="true" data-width="100%">
+													<select id="numPer" class="selectpicker" data-live-search="true" data-width="100%">
 														<option data-tokens="Number of Rooms">Number of Persons</option>
 														<option data-tokens="1">1</option>
 														<option data-tokens="2">2</option>
@@ -236,7 +270,29 @@
 												</span>
 											</div>
 											<div class="form-group">
-												<button type="submit" class="tg-btn tg-btn-lg"><span>proceed booking</span></button>
+												<div class="tg-formicon"><i class="icon-user-check"></i></div>
+												<span class="tg-select">
+													<select id="transport" class="selectpicker" data-live-search="true" data-width="100%">
+														<option data-tokens="Number of Rooms">Select Transportation</option>
+														<% for (var i=0; i< transportList.length; i++) { %>
+															<option value="<%= transportList[0].id%>"><%= transportList[i].name%></option>
+														<% } %>	
+													</select>
+												</span>
+											</div>
+											<div class="form-group">
+												<div class="tg-formicon"><i class="icon-users"></i></div>
+												<span class="tg-select">
+													<select id="hotel" class="selectpicker" data-live-search="true" data-width="100%">
+														<option data-tokens="Persons">Select Type Room</option>
+														<% for (var i=0; i< hotelList.length; i++) { %>
+															<option value="<%= hotelList[0].id%>"><%= hotelList[i].name%></option>
+														<% } %>	
+													</select>
+												</span>
+											</div>
+											<div class="form-group">
+												<button type="submit" id="submitBtn" class="tg-btn tg-btn-lg" data-toggle="modal" data-target="#exampleModal"><span>proceed booking</span></button>
 											</div>
 										</fieldset>
 									</form>
