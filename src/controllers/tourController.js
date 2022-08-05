@@ -76,12 +76,12 @@ async function searchTour(depart, arrival, startDate) {
 }
 
 
-async function searchTransport(departID) {
+async function searchTransport(departID, arriveID) {
     const tours = await db.sequelize.query(
         "select se.id as id, ty.ticket_type_name as name from TRANSPORT_SERVICE se left join TICKET_TYPE ty"
-        + " on se.ticket_type_id = ty.id where se.from_city_id = ?",
+        + " on se.ticket_type_id = ty.id where se.from_city_id = ? and se.to_city_id",
         {
-            replacements: [departID],
+            replacements: [departID, arriveID],
             type: sequelize.QueryTypes.SELECT
         }
     )
@@ -102,20 +102,7 @@ async function searchHotel() {
 }
 
 async function bookTour(info) {
-    // console.log(info.customerID)
-    // const custom_id = db.sequelize.define("custom_id", {
-    //     custom_id: {
-    //         type: db.sequelize.DataTypes.INTEGER,
-    //         allowNull: false
-    //     }
-    //  });
-     custom_id = parseInt(info.customerID)
     const res = await db.sequelize
-    // .query('CALL sp_order_add (:cust_id, :tour_id, :quantity, :note, :payment_method, :hotel_service_id, :transport_service_id, :tour_price)', 
-    //       {
-    //         replacements: { cust_id: parseInt(info.customerID), tour_id: info.tourID, quantity: info.quantity, note: info.note, 
-    //             payment_method: info.payment, hotel_service_id: info.hotel, transport_service_id: info.transport, tour_price: info.price}
-    //     })
     .query('EXEC sp_order_add @cust_id=?, @tour_id=?, @quantity=?, @note=?, @payment_method=?, @hotel_service_id=?, @transport_service_id=?, @tour_price=?', 
           {
             replacements: [ parseInt(info.customerID), parseInt(info.tourID), parseInt(info.quantity), "abc", 

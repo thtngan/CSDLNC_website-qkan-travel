@@ -49,9 +49,7 @@ router.get('/tourbookingdetail/:id', async (req, res, next)=>{
       // const tour = await getAllTours();
       id = req.params.id;
       const tour = await getTourById(id);
-      console.log(tour)
-      console.log("to transport an dhotel")
-      const transport = await searchTransport(tour[0].departure_id)
+      const transport = await searchTransport(tour[0].departure_id, tour[0].destination_id)
       const hotel = await searchHotel()
       console.log(transport)
       // res.status(200).json({tour: tour});
