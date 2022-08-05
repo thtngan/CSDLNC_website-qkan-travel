@@ -145,9 +145,6 @@ router.post('/addstaff', async (req, res, next)=>{
       // console.log(req.body)
       // console.log(req.params)
       await createStaff(req.body);
-      // res.json({
-      //   "message": "Product Created"
-      // });
       res.sendStatus(201);
 
   } catch(e) {
@@ -160,6 +157,7 @@ router.post('/editstaff', async (req, res, next)=>{
   try {
       // const staffs = await getAllStaffs();
       // // res.status(200).json({tour: tour});
+      console.log(req.body)
       await updateStaff(req.body);
       res.sendStatus(200);
 

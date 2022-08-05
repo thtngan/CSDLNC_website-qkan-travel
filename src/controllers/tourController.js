@@ -79,7 +79,7 @@ async function searchTour(depart, arrival, startDate) {
 async function searchTransport(departID, arriveID) {
     const tours = await db.sequelize.query(
         "select se.id as id, ty.ticket_type_name as name from TRANSPORT_SERVICE se left join TICKET_TYPE ty"
-        + " on se.ticket_type_id = ty.id where se.from_city_id = ? and se.to_city_id",
+        + " on se.ticket_type_id = ty.id where se.from_city_id = ? and se.to_city_id = ?",
         {
             replacements: [departID, arriveID],
             type: sequelize.QueryTypes.SELECT
