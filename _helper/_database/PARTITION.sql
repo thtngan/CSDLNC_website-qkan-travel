@@ -1,5 +1,49 @@
-USE [qltour]
+Use master
+-- Step 1: Create FileGroup
+-- FILEGROUP F1
+ALTER DATABASE [qltour] ADD FILEGROUP FG1
 GO
+ALTER DATABASE [qltour] 
+ADD FILE 
+    ( NAME = N'qltour_data01', FILENAME = N'C:\CSDL\qltour_data01.ndf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+TO FILEGROUP FG1
+GO
+-- FILEGROUP F2
+ALTER DATABASE [qltour] ADD FILEGROUP FG2
+GO
+ALTER DATABASE [qltour] 
+ADD FILE 
+    ( NAME = N'qltour_data02', FILENAME = N'C:\CSDL\qltour_data02.ndf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+TO FILEGROUP FG2
+GO
+-- FILEGROUP F3
+ALTER DATABASE [qltour] ADD FILEGROUP FG3
+GO
+ALTER DATABASE [qltour] 
+ADD FILE 
+    ( NAME = N'qltour_data03', FILENAME = N'C:\CSDL\qltour_data03.ndf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+TO FILEGROUP FG3
+--------------------------------------------------------
+--------------------------------------------------------
+GO
+USE [qltour]
+--Step 2: Create Partition Function
+CREATE PARTITION FUNCTION pfTour (DATE)
+AS RANGE RIGHT FOR VALUES 
+('1987-01-01', '1997-01-01', '2007-01-01');
+GO
+CREATE PARTITION FUNCTION pfInvoice (DATETIME)
+AS RANGE RIGHT FOR VALUES 
+('2001-01-01', '2002-01-01');
+GO
+--Step 3: Create Partition Scheme
+CREATE PARTITION SCHEME psTour
+AS PARTITION pfTour TO ([PRIMARY], FG1, FG2, FG3)  
+GO
+CREATE PARTITION SCHEME psInvoice
+AS PARTITION pfInvoice TO ([PRIMARY], FG1, FG2)
+GO
+-- Step 4: Create Clustered Index
 BEGIN TRANSACTION
 ALTER TABLE [dbo].[FEEDBACK] DROP CONSTRAINT [FK01_FEEDBACK]
 
