@@ -42,26 +42,7 @@
             <a class="mobile_btn" id="mobile_btn">
             <i class="fas fa-bars"></i>
             </a>
-            <ul class="nav user-menu">
-               <li class="nav-item dropdown has-arrow">
-                  <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-                  <span class="user-img"><img class="rounded-circle" src="assets/img/profiles/avatar-01.jpg" width="31" alt="Ryan Taylor"></span>
-                  </a>
-                  <div class="dropdown-menu">
-                     <div class="user-header">
-                        <div class="avatar avatar-sm">
-                           <img src="assets/img/profiles/avatar-01.jpg" alt="User Image" class="avatar-img rounded-circle">
-                        </div>
-                        <div class="user-text">
-                           <h6>Ryan Taylor</h6>
-                           <p class="text-muted mb-0">Administrator</p>
-                        </div>
-                     </div>
-                     <a class="dropdown-item" href="profile.html">My Profile</a>
-                     <a class="dropdown-item" href="login.html">Logout</a>
-                  </div>
-               </li>
-            </ul>
+            
          </div>
          <div class="sidebar" id="sidebar">
             <div class="sidebar-inner slimscroll">
@@ -217,36 +198,36 @@
                                           </div>
                                        </div>
                                        <div class="col-12 col-sm-6">
-                                          <div class="form-group">
+                                          <div class="form-group">"
                                              <label>Type</label>
                                              <% if(staffList[0].staff_type_name == 'Sales'){ %>
                                                 <select id = "type" class="form-control">
-                                                   <option selected value="13">Sales</option>
-                                                   <option value="53">Marketing</option>
-                                                   <option value="6">Accounting</option>
+                                                   <option selected value="79">Sales Associate</option>
+                                                   <option value="29">Marketing Assistant</option>
+                                                   <option value="158">Accountant I</option>
                                                    <option value="1">Service</option>
                                                 </select>
                                             <% } else{ %>  
                                              <% if(staffList[0].staff_type_name == 'Marketing'){ %>
                                                 <select id = "type" class="form-control">
-                                                   <option value="13">Sales</option>
-                                                   <option selected value="53">Marketing</option>
-                                                   <option value="6">Accounting</option>
+                                                   <option value="79">Sales Associate</option>
+                                                   <option selected value="29">Marketing Assistant</option>
+                                                   <option value="158">Accountant I</option>
                                                    <option value="1">Service</option>
                                                 </select>
                                             <% } else{ %>  
-                                             <% if(staffList[0].staff_type_name == 'Accountant'){ %>
+                                             <% if(staffList[0].staff_type_name == 'Accountant I'){ %>
                                                 <select id = "type" class="form-control">
-                                                   <option value="13">Sales</option>
-                                                   <option value="53">Marketing</option>
-                                                   <option selected value="6">Accountant</option>
+                                                   <option value="79">Sales Associate</option>
+                                                   <option value="29">Marketing Assistant</option>
+                                                   <option selected value="158">Accountant I</option>
                                                    <option value="1">Service</option>
                                                 </select>
                                             <% } else{ %>  
                                              <select id = "type" class="form-control">
-                                                <option value="13">Sales</option>
-                                                <option value="53">Marketing</option>
-                                                <option value="6">Accountant</option>
+                                                <option value="79">Sales Associate</option>
+                                                <option value="29">Marketing Assistant</option>
+                                                <option value="158">Accountant I</option>
                                                 <option selected value="1">Service</option>
                                              </select>
                                             <% } %>

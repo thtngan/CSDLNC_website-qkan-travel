@@ -21,7 +21,7 @@ module.exports = {
 
 async function getAllStaffs() {
   const staffs = await db.sequelize.query(
-      "SELECT top(100) s.*, t.staff_type_name FROM STAFF s LEFT JOIN STAFF_TYPE t ON s.staff_type_id = t.id",
+      "SELECT top(10000) s.*, t.staff_type_name FROM STAFF s LEFT JOIN STAFF_TYPE t ON s.staff_type_id = t.id",
       {
           type: sequelize.QueryTypes.SELECT
       }
@@ -35,7 +35,7 @@ async function getAllStaffs() {
 
 async function getStaffById(Sid) {
   const staffs = await db.sequelize.query(
-      "SELECT s.*, t.staff_type_name FROM STAFF s FULL OUTER JOIN STAFF_TYPE t ON s.staff_type_id = t.id Where s.id= ?",
+      "SELECT s.*, t.staff_type_name FROM STAFF s LEFT JOIN STAFF_TYPE t ON s.staff_type_id = t.id Where s.id= ?",
       {
           replacements: [Sid],
           type: sequelize.QueryTypes.SELECT
@@ -84,8 +84,8 @@ async function updateStaff(addstaff) {
     "SET staff_name = ? , gender=?,  dob=?, tele=?, staff_address=?, staff_type_id=?, id_no=?, manager_id =? " + 
     " WHERE id=?",
     {
-        replacements: [addstaff.name, addstaff.gender, addstaff.dob, addstaff.tele, addstaff.address, addstaff.type, addstaff.idNumber, addstaff.managerId, addstaff.id],
-        type: sequelize.QueryTypes.UPDATE
+        replacements: [addstaff.name, addstaff.gender, addstaff.dob, addstaff.tele, addstaff.address, parseInt(addstaff.type), addstaff.idNumber, parseInt(addstaff.managerId), parseInt(addstaff.id)],
+        // type: sequelize.QueryTypes.UPDATE
     }
   ).catch((error) => console.error(error));
 

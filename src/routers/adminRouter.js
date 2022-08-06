@@ -23,7 +23,6 @@ router.get('/', async (req, res, next)=>{
       var year = revenue.map(a => a.year);
       var reve = revenue.map(a => parseInt(a.revenue));
       const line = {"yearList": year,"revenuList": reve}
-      console.log(line)
       res.status(200);
       res.render('./Admin/index',{lineChart:line});
 
@@ -55,7 +54,6 @@ router.get('/getRevenue', async (req, res, next)=>{
       var year = revenue.map(a => a.year);
       var reve = revenue.map(a => a.revenue);
       const line = {"yearList": year,"revenuList": reve}
-      console.log(line)
       res.send({lineChart:line});
 
       // res.render('./Admin/index', { staffList: staffs});
@@ -74,7 +72,6 @@ router.get('/getIncoming', async (req, res, next)=>{
       var spend = incoming.map(a => a.spending);
 
       const bar = {"nameList": name,"incomeList": income, "spendList":spend}
-      console.log(bar)
       res.send({barChart:bar});
 
       // res.render('./Admin/index', { staffList: staffs});
@@ -170,10 +167,15 @@ router.post('/editstaff', async (req, res, next)=>{
 router.get('/search/:name', async (req, res, next)=>{
   try {
     console.log(req.params.name)
+    const start = new Date()
     const staffs = await getStaffByName(req.params.name);
+
+    const stop = new Date()
+
+    console.log(`Time Taken to execute = ${(stop - start)/1000} seconds`)
       // res.status(200).json({tour: tour});
       // console.log(staffs[0])
-      res.render('./Admin/staffSearch', { staffList: staffs});
+    res.render('./Admin/staffSearch', { staffList: staffs});
 
   } catch(e) {
       console.log(e);
